@@ -2,9 +2,12 @@
 
 ## 1. Autor(es)
 
-Francisco Luiz Ferreira D Santos
+Francisco Luiz Ferreira dos Santos
 Ígor Fernandes Dammous
-Maurício Gabriel Torres Rodrigues da Silva
+Joao Vitor Alves do Nascimento Silva
+Regiane Leane Leite Golla
+Soraia Canoso Bandeira
+Vinicius Raimundo Dos Santos
 
 ## 2. Título do Jogo
 

@@ -1,1075 +1,84 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Logic & Dungeon</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap');
-
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a28;
-    --accent: #e84040;
-    --accent2: #ff6b35;
-    --gold: #ffd700;
-    --vine: #16a34a;
-    --vine2: #4ade80;
-    --ice: #22d3ee;
-    --btn: #f59e0b;
-    --door: #f97316;
-    --wall: #374151;
-    --wall2: #4b5563;
-    --target: #22c55e;
-    --text: #f0f0f8;
-    --muted: #6b7280;
-    --tile: #1e1e2e;
-    --tile2: #262638;
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Rajdhani', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    overflow: hidden;
-    width: 100vw;
-    height: 100vh;
-    user-select: none;
-  }
-
-  /* ===== SCREENS ===== */
-  .screen {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.5s, transform 0.5s;
-  }
-  .screen.hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
-  .screen.disintegrate {
-    animation: disintegrate 0.6s forwards;
-  }
-  @keyframes disintegrate {
-    0% { opacity: 1; filter: none; transform: scale(1); }
-    50% { opacity: 0.5; filter: blur(4px) saturate(3); transform: scale(1.05); }
-    100% { opacity: 0; filter: blur(20px); transform: scale(1.1); }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes floatY {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-12px); }
-  }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 20px rgba(232,64,64,0.4); }
-    50% { box-shadow: 0 0 40px rgba(232,64,64,0.8), 0 0 80px rgba(232,64,64,0.3); }
-  }
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  @keyframes portalSpin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  @keyframes shimmer {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
-  @keyframes starPop {
-    0% { transform: scale(0) rotate(-30deg); opacity: 0; }
-    60% { transform: scale(1.3) rotate(10deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-  }
-
-  /* ===== TITLE SCREEN ===== */
-  #screen-title {
-    background: radial-gradient(ellipse at 50% 30%, #1a0a2e 0%, #0a0a0f 60%);
-  }
-  #screen-title::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    pointer-events: none;
-  }
-  .title-logo {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(2.5rem, 6vw, 5rem);
-    font-weight: 900;
-    letter-spacing: 0.15em;
-    background: linear-gradient(135deg, #ff6b35, #e84040, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    animation: fadeIn 1s ease 0.2s both;
-    text-shadow: none;
-    filter: drop-shadow(0 0 30px rgba(232,64,64,0.5));
-  }
-  .title-sub {
-    font-size: 1.1rem;
-    letter-spacing: 0.5em;
-    color: var(--muted);
-    margin-top: 8px;
-    animation: fadeIn 1s ease 0.5s both;
-    text-transform: uppercase;
-  }
-  .earth-btn {
-    width: 160px;
-    height: 160px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    margin: 50px 0 20px;
-    position: relative;
-    background: radial-gradient(circle at 35% 35%, #4ade80, #16a34a 40%, #15803d 70%, #14532d);
-    box-shadow: 
-      inset -20px -20px 40px rgba(0,0,0,0.4),
-      inset 15px 15px 30px rgba(255,255,255,0.1),
-      0 0 40px rgba(74,222,128,0.3),
-      0 0 80px rgba(74,222,128,0.15);
-    animation: fadeIn 1s ease 0.7s both, floatY 4s ease-in-out 1.7s infinite, pulse 3s ease-in-out infinite;
-    transition: transform 0.2s;
-    overflow: hidden;
-  }
-  .earth-btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: 
-      radial-gradient(ellipse 60% 30% at 30% 40%, rgba(255,255,255,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 20% at 70% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
-  }
-  .earth-btn::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 50%;
-    border: 2px solid rgba(74,222,128,0.4);
-    animation: spin 8s linear infinite;
-    border-top-color: rgba(74,222,128,0.8);
-  }
-  .earth-btn:hover { transform: scale(1.05); }
-  .earth-btn:active { transform: scale(0.97); }
-  .earth-continent {
-    position: absolute;
-    background: rgba(255,255,255,0.12);
-    border-radius: 50% 40% 60% 30%;
-  }
-  .play-label {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.85rem;
-    letter-spacing: 0.3em;
-    color: var(--muted);
-    animation: fadeIn 1s ease 1s both;
-    text-transform: uppercase;
-  }
-  .dev-mode-btn {
-    position: absolute;
-    bottom: 24px;
-    left: 24px;
-    padding: 8px 16px;
-    border: 2px solid rgba(255,215,0,0.25);
-    border-radius: 10px;
-    background: rgba(255,215,0,0.05);
-    color: rgba(255,215,0,0.5);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    letter-spacing: 0.1em;
-    transition: all 0.2s;
-    animation: fadeIn 1s ease 1.5s both;
-  }
-  .dev-mode-btn:hover {
-    border-color: rgba(255,215,0,0.6);
-    color: var(--gold);
-    background: rgba(255,215,0,0.1);
-  }
-  .dev-badge {
-    position: fixed;
-    top: 12px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #ffd700, #f59e0b);
-    color: #1a1000;
-    font-family: 'Orbitron', monospace;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.15em;
-    padding: 5px 14px;
-    border-radius: 20px;
-    z-index: 200;
-    display: none;
-    box-shadow: 0 2px 16px rgba(255,215,0,0.4);
-  }
-  .dev-badge.visible { display: block; }
-
-  /* Dev password modal */
-  #dev-modal .modal h2 { background: linear-gradient(135deg, #ffd700, #f59e0b); -webkit-background-clip: text; background-clip: text; }
-  .dev-input {
-    width: 100%;
-    margin: 16px 0;
-    padding: 14px 18px;
-    background: rgba(255,255,255,0.05);
-    border: 1.5px solid rgba(255,215,0,0.3);
-    border-radius: 12px;
-    color: var(--gold);
-    font-family: 'Orbitron', monospace;
-    font-size: 1.2rem;
-    letter-spacing: 0.3em;
-    text-align: center;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .dev-input:focus { border-color: var(--gold); }
-  .dev-input.error { border-color: var(--accent); color: var(--accent); animation: shake 0.3s ease; }
-  @keyframes shake {
-    0%,100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
-  }
-  .dev-btn-enter {
-    width: 100%;
-    padding: 14px;
-    border: 2px solid rgba(255,215,0,0.4);
-    border-radius: 12px;
-    background: transparent;
-    color: var(--gold);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-  }
-  .dev-btn-enter:hover { background: var(--gold); color: #1a1000; }
-
-  .title-settings-btn {
-    position: absolute;
-    top: 24px;
-    right: 24px;
-    width: 48px;
-    height: 48px;
-    border: 2px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    background: rgba(255,255,255,0.05);
-    color: var(--muted);
-    font-size: 1.4rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    animation: fadeIn 1s ease 1.2s both;
-  }
-  .title-settings-btn:hover {
-    border-color: rgba(255,255,255,0.4);
-    color: var(--text);
-    background: rgba(255,255,255,0.1);
-    transform: rotate(60deg);
-  }
-
-  /* ===== SETTINGS MODAL ===== */
-  .modal-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    backdrop-filter: blur(4px);
-  }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--surface);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 24px;
-    padding: 40px;
-    min-width: 360px;
-    max-width: 90vw;
-    transform: translateY(20px) scale(0.95);
-    transition: transform 0.3s;
-    box-shadow: 0 40px 80px rgba(0,0,0,0.6);
-  }
-  .modal-overlay.open .modal { transform: none; }
-  .modal h2 {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.3rem;
-    margin-bottom: 30px;
-    background: linear-gradient(135deg, #e84040, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .setting-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-  }
-  .setting-row label { font-size: 1.1rem; color: #c0c0d0; }
-  .toggle {
-    width: 52px;
-    height: 28px;
-    background: #374151;
-    border-radius: 14px;
-    cursor: pointer;
-    position: relative;
-    transition: background 0.3s;
-    border: none;
-  }
-  .toggle.on { background: var(--accent); }
-  .toggle::after {
-    content: '';
-    position: absolute;
-    width: 22px;
-    height: 22px;
-    background: white;
-    border-radius: 50%;
-    top: 3px;
-    left: 3px;
-    transition: transform 0.3s;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-  }
-  .toggle.on::after { transform: translateX(24px); }
-  .slider-row { padding: 14px 0; }
-  .slider-row label { font-size: 1.1rem; color: #c0c0d0; display: block; margin-bottom: 10px; }
-  input[type=range] {
-    width: 100%;
-    accent-color: var(--accent);
-    height: 4px;
-  }
-  .modal-close {
-    width: 100%;
-    margin-top: 24px;
-    padding: 14px;
-    border: 2px solid rgba(232,64,64,0.4);
-    border-radius: 12px;
-    background: transparent;
-    color: var(--accent);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .modal-close:hover { background: var(--accent); color: white; }
-  .btn-danger {
-    width: 100%;
-    margin-top: 10px;
-    padding: 14px;
-    border: 2px solid rgba(239,68,68,0.3);
-    border-radius: 12px;
-    background: transparent;
-    color: #ef4444;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-    cursor: pointer;
-    transition: all 0.2s;
-    text-transform: uppercase;
-  }
-  .btn-danger:hover { background: #ef4444; color: white; }
-
-  /* ===== WORLD SELECT ===== */
-  #screen-worlds {
-    background: radial-gradient(ellipse at 50% 0%, #1a0a2e 0%, #0a0a0f 70%);
-    padding: 40px 20px;
-    overflow-y: auto;
-  }
-  .worlds-header {
-    text-align: center;
-    margin-bottom: 50px;
-    animation: fadeIn 0.5s ease both;
-  }
-  .worlds-header h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: 2rem;
-    background: linear-gradient(135deg, #e84040, #ff6b35);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .worlds-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 24px;
-    max-width: 1100px;
-    width: 100%;
-  }
-  .world-card {
-    border-radius: 20px;
-    border: 2px solid rgba(255,255,255,0.08);
-    overflow: hidden;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    animation: fadeIn 0.5s ease both;
-  }
-  .world-card:nth-child(1) { animation-delay: 0.1s; }
-  .world-card:nth-child(2) { animation-delay: 0.2s; }
-  .world-card:nth-child(3) { animation-delay: 0.3s; }
-  .world-card:nth-child(4) { animation-delay: 0.4s; }
-  .world-card:nth-child(5) { animation-delay: 0.5s; }
-  .world-card:hover:not(.locked) {
-    transform: translateY(-6px);
-    border-color: rgba(255,255,255,0.25);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-  }
-  .world-card.locked { cursor: not-allowed; filter: grayscale(1) brightness(0.5); }
-  .world-art {
-    height: 160px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    font-size: 4rem;
-  }
-  .world-art canvas {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-  .world-art .world-icon {
-    position: relative;
-    z-index: 1;
-    font-size: 3.5rem;
-    filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
-    animation: floatY 3s ease-in-out infinite;
-  }
-  .world-info {
-    padding: 20px;
-    background: var(--surface);
-  }
-  .world-info h3 {
-    font-family: 'Orbitron', monospace;
-    font-size: 1rem;
-    margin-bottom: 6px;
-  }
-  .world-info p { font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
-  .world-stars {
-    display: flex;
-    gap: 4px;
-    font-size: 1.1rem;
-  }
-  .world-lock {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    background: rgba(0,0,0,0.3);
-  }
-  .back-btn {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    padding: 10px 20px;
-    border: 2px solid rgba(255,255,255,0.15);
-    border-radius: 12px;
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .back-btn:hover { border-color: rgba(255,255,255,0.4); color: var(--text); }
-
-  /* ===== LEVEL SELECT ===== */
-  #screen-levels {
-    background: radial-gradient(ellipse at 50% 0%, #1a0a2e 0%, #0a0a0f 70%);
-    padding: 40px 20px;
-    overflow-y: auto;
-  }
-  .levels-header {
-    text-align: center;
-    margin-bottom: 40px;
-    animation: fadeIn 0.5s ease both;
-  }
-  .levels-header h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.8rem;
-  }
-  .levels-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    max-width: 600px;
-    width: 100%;
-  }
-  .level-card {
-    aspect-ratio: 1;
-    border-radius: 16px;
-    border: 2px solid rgba(255,255,255,0.1);
-    background: var(--surface);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    position: relative;
-    gap: 6px;
-    animation: fadeIn 0.4s ease both;
-  }
-  .level-card:nth-child(1) { animation-delay: 0.05s; }
-  .level-card:nth-child(2) { animation-delay: 0.1s; }
-  .level-card:nth-child(3) { animation-delay: 0.15s; }
-  .level-card:nth-child(4) { animation-delay: 0.2s; }
-  .level-card:nth-child(5) { animation-delay: 0.25s; }
-  .level-card:hover:not(.locked) {
-    transform: scale(1.05);
-    border-color: rgba(255,255,255,0.3);
-    background: var(--surface2);
-  }
-  .level-card.locked { filter: brightness(0.4); cursor: not-allowed; }
-  .level-card .level-num {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.6rem;
-    font-weight: 700;
-  }
-  .level-card .level-stars { font-size: 0.85rem; }
-  .level-card.completed { border-color: rgba(255,215,0,0.4); }
-
-  /* ===== GAME SCREEN ===== */
-  #screen-game {
-    background: var(--bg);
-    flex-direction: column;
-  }
-  .game-hud {
-    width: 100%;
-    max-width: 800px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
-    background: rgba(255,255,255,0.03);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .hud-left { display: flex; align-items: center; gap: 16px; }
-  .hud-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 0.85rem;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-  }
-  .hud-moves {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.1rem;
-    color: var(--text);
-  }
-  .hud-moves span { color: var(--accent2); }
-  .hud-right { display: flex; gap: 12px; }
-  .hud-btn {
-    padding: 8px 16px;
-    border-radius: 10px;
-    border: 1.5px solid rgba(255,255,255,0.12);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.1em;
-  }
-  .hud-btn:hover { border-color: rgba(255,255,255,0.3); color: var(--text); }
-  .hud-btn.reset:hover { border-color: var(--accent); color: var(--accent); }
-  .hud-btn.grab-btn { transition: all 0.15s; }
-  .hud-btn.grab-btn.active {
-    border-color: var(--gold);
-    color: var(--gold);
-    background: rgba(255,215,0,0.12);
-    box-shadow: 0 0 12px rgba(255,215,0,0.35);
-  }
-  .hud-btn.grab-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .game-area {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    overflow: hidden;
-  }
-  #game-canvas {
-    border-radius: 12px;
-    box-shadow: 0 0 60px rgba(0,0,0,0.8);
-    image-rendering: pixelated;
-    max-width: 100%;
-    max-height: calc(100vh - 140px);
-  }
-  .game-controls-hint {
-    display: flex;
-    gap: 20px;
-    padding: 10px 20px;
-    color: var(--muted);
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
-  }
-
-  /* ===== WIN OVERLAY ===== */
-  #win-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 50;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s;
-    backdrop-filter: blur(6px);
-  }
-  #win-overlay.show { opacity: 1; pointer-events: all; }
-  .win-box {
-    background: var(--surface);
-    border: 1px solid rgba(255,215,0,0.3);
-    border-radius: 28px;
-    padding: 50px 60px;
-    text-align: center;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.7), 0 0 60px rgba(255,215,0,0.1);
-  }
-  .win-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 2rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, var(--gold), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 10px;
-  }
-  .win-sub { color: var(--muted); font-size: 1rem; margin-bottom: 30px; }
-  .win-stars {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 36px;
-    font-size: 3rem;
-  }
-  .win-star {
-    display: inline-block;
-    opacity: 0;
-    transform: scale(0);
-  }
-  .win-star.show { animation: starPop 0.4s ease forwards; }
-  .win-star.show:nth-child(2) { animation-delay: 0.15s; }
-  .win-star.show:nth-child(3) { animation-delay: 0.3s; }
-  .win-star.empty { filter: grayscale(1) brightness(0.4); opacity: 0.4; }
-  .win-moves { color: var(--muted); font-size: 1rem; margin-bottom: 30px; }
-  .win-moves b { color: var(--text); }
-  .win-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-  .win-btn {
-    padding: 14px 28px;
-    border-radius: 14px;
-    border: 2px solid rgba(255,255,255,0.15);
-    background: transparent;
-    color: var(--text);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-  .win-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.35); }
-  .win-btn.primary { border-color: var(--gold); color: var(--gold); }
-  .win-btn.primary:hover { background: var(--gold); color: var(--bg); }
-
-  /* particles */
-  .particle {
-    position: absolute;
-    border-radius: 50%;
-    pointer-events: none;
-    animation: particleFly 1.2s ease forwards;
-  }
-  @keyframes particleFly {
-    0% { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
-  }
-
-  /* ===== DIFFICULTY SCREEN ===== */
-  #screen-difficulty {
-    background: radial-gradient(ellipse at 50% 30%, #1a0a2e 0%, #0a0a0f 60%);
-    gap: 28px;
-    padding: 40px 20px;
-  }
-  .diff-title {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.6rem;
-    font-weight: 900;
-    background: linear-gradient(135deg, #ff6b35, #e84040, #a855f7);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
-    animation: fadeIn 0.6s ease both;
-  }
-  .diff-sub {
-    color: var(--muted);
-    font-size: 1rem;
-    letter-spacing: 0.1em;
-    animation: fadeIn 0.6s ease 0.1s both;
-  }
-  .diff-cards {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 900px;
-  }
-  .diff-card {
-    flex: 1;
-    min-width: 220px;
-    max-width: 270px;
-    border-radius: 20px;
-    border: 2px solid rgba(255,255,255,0.1);
-    background: var(--surface);
-    padding: 32px 24px 28px;
-    cursor: pointer;
-    transition: all 0.3s;
-    text-align: center;
-    animation: fadeIn 0.5s ease both;
-    position: relative;
-    overflow: hidden;
-  }
-  .diff-card:nth-child(1) { animation-delay: 0.15s; }
-  .diff-card:nth-child(2) { animation-delay: 0.25s; }
-  .diff-card:nth-child(3) { animation-delay: 0.35s; }
-  .diff-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .diff-card.easy::before   { background: radial-gradient(ellipse at 50% 0%, rgba(74,222,128,0.15) 0%, transparent 70%); }
-  .diff-card.normal::before { background: radial-gradient(ellipse at 50% 0%, rgba(251,191,36,0.15) 0%, transparent 70%); }
-  .diff-card.expert::before { background: radial-gradient(ellipse at 50% 0%, rgba(239,68,68,0.18) 0%, transparent 70%); }
-  .diff-card:hover::before  { opacity: 1; }
-  .diff-card:hover { transform: translateY(-6px); }
-  .diff-card.easy:hover   { border-color: #4ade80; box-shadow: 0 12px 40px rgba(74,222,128,0.2); }
-  .diff-card.normal:hover { border-color: #fbbf24; box-shadow: 0 12px 40px rgba(251,191,36,0.2); }
-  .diff-card.expert:hover { border-color: #ef4444; box-shadow: 0 12px 40px rgba(239,68,68,0.2); }
-  .diff-icon { font-size: 3.2rem; margin-bottom: 14px; display: block; }
-  .diff-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-  .diff-card.easy   .diff-name { color: #4ade80; }
-  .diff-card.normal .diff-name { color: #fbbf24; }
-  .diff-card.expert .diff-name { color: #ef4444; }
-  .diff-desc {
-    color: var(--muted);
-    font-size: 0.88rem;
-    line-height: 1.5;
-  }
-  .diff-badge {
-    display: inline-block;
-    margin-top: 14px;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .diff-card.easy   .diff-badge { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-  .diff-card.normal .diff-badge { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
-  .diff-card.expert .diff-badge { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
-
-  /* ===== EXPERT COMMAND INPUT ===== */
-  .expert-input-area {
-    width: 100%;
-    max-width: 800px;
-    padding: 10px 20px 14px;
-    background: rgba(0,0,0,0.4);
-    border-top: 1px solid rgba(239,68,68,0.25);
-    display: none;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .expert-input-area.active { display: flex; }
-  .expert-input-row {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  .expert-action-btns {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-  }
-  .expert-action-btn {
-    padding: 7px 14px;
-    border-radius: 8px;
-    border: 2px solid rgba(255,255,255,0.15);
-    background: transparent;
-    color: var(--muted);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .expert-action-btn.selected-mover   { border-color: #22d3ee; color: #22d3ee; background: rgba(34,211,238,0.1); }
-  .expert-action-btn.selected-segurar { border-color: #ffd700; color: #ffd700; background: rgba(255,215,0,0.1); }
-  .expert-cmd-input {
-    flex: 1;
-    padding: 8px 14px;
-    background: rgba(255,255,255,0.04);
-    border: 1.5px solid rgba(255,255,255,0.12);
-    border-radius: 10px;
-    color: var(--text);
-    font-family: 'Orbitron', monospace;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .expert-cmd-input:focus { border-color: rgba(239,68,68,0.5); }
-  .expert-cmd-input.error { border-color: var(--accent); animation: shake 0.3s ease; }
-  .expert-send-btn {
-    padding: 8px 18px;
-    border-radius: 10px;
-    border: 2px solid rgba(239,68,68,0.4);
-    background: transparent;
-    color: var(--accent);
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-  .expert-send-btn:hover { background: var(--accent); color: white; }
-  .expert-feedback {
-    font-size: 0.82rem;
-    min-height: 16px;
-    letter-spacing: 0.04em;
-    padding-left: 4px;
-  }
-  .expert-feedback.ok  { color: #4ade80; }
-  .expert-feedback.err { color: var(--accent); }
-  .expert-hint {
-    color: var(--muted);
-    font-size: 0.78rem;
-    letter-spacing: 0.04em;
-    padding-left: 4px;
-  }
-  /* Difficulty badge in HUD */
-  .hud-diff-badge {
-    padding: 3px 10px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-  }
-  .hud-diff-badge.easy   { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-  .hud-diff-badge.normal { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
-  .hud-diff-badge.expert { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
-</style>
-</head>
-<body>
-
-<!-- TITLE SCREEN -->
-<div id="screen-title" class="screen">
-  <div class="title-logo">LOGIC & DUNGEON</div>
-  <div class="title-sub">Empurre · Pense · Vença</div>
-  <button class="earth-btn" id="earth-btn" aria-label="Jogar">
-    <div class="earth-continent" style="width:55%;height:35%;top:20%;left:15%;transform:rotate(-10deg)"></div>
-    <div class="earth-continent" style="width:30%;height:25%;top:55%;left:55%;transform:rotate(20deg)"></div>
-    <div class="earth-continent" style="width:20%;height:15%;top:70%;left:20%;"></div>
-  </button>
-  <div class="play-label">Clique para jogar</div>
-  <button class="dev-mode-btn" id="dev-mode-btn" title="Modo Desenvolvedor">🔧 Dev</button>
-  <button class="title-settings-btn" id="settings-btn" title="Configurações">⚙️</button>
-</div>
-
-<!-- DIFFICULTY SELECT -->
-<div id="screen-difficulty" class="screen hidden">
-  <button class="back-btn" id="back-to-title-from-diff">← Voltar</button>
-  <div class="diff-title">SELECIONAR DIFICULDADE</div>
-  <div class="diff-sub">Como você quer jogar?</div>
-  <div class="diff-cards">
-    <div class="diff-card easy" onclick="selectDifficulty('easy')">
-      <span class="diff-icon">🌿</span>
-      <div class="diff-name">FÁCIL</div>
-      <div class="diff-desc">Fases curtas com menos puzzles. Ideal para aprender as mecânicas sem pressão.</div>
-      <span class="diff-badge">Iniciante</span>
-    </div>
-    <div class="diff-card normal" onclick="selectDifficulty('normal')">
-      <span class="diff-icon">⚔️</span>
-      <div class="diff-name">NORMAL</div>
-      <div class="diff-desc">Fases com complexidade crescente. Cada mundo exige domínio das suas próprias mecânicas.</div>
-      <span class="diff-badge">Recomendado</span>
-    </div>
-    <div class="diff-card expert" onclick="selectDifficulty('expert')">
-      <span class="diff-icon">💀</span>
-      <div class="diff-name">EXPERT</div>
-      <div class="diff-desc">Controle por comandos de texto. Mova o personagem digitando "mover direita", "segurar bloco", etc.</div>
-      <span class="diff-badge">Desafiador</span>
-    </div>
-  </div>
-</div>
-
-<!-- WORLD SELECT -->
-<div id="screen-worlds" class="screen hidden">
-  <button class="back-btn" id="back-to-title">← Voltar</button>
-  <div class="worlds-header">
-    <h1>SELECIONAR MUNDO</h1>
-    <p style="color:var(--muted);margin-top:8px;font-size:1rem">Escolha sua aventura</p>
-  </div>
-  <div class="worlds-grid" id="worlds-grid"></div>
-</div>
-
-<!-- LEVEL SELECT -->
-<div id="screen-levels" class="screen hidden">
-  <button class="back-btn" id="back-to-worlds">← Mundos</button>
-  <div class="levels-header">
-    <h1 id="levels-world-title">MUNDO 1</h1>
-    <p id="levels-world-sub" style="color:var(--muted);margin-top:8px;font-size:1rem"></p>
-  </div>
-  <div class="levels-grid" id="levels-grid"></div>
-</div>
-
-<!-- GAME SCREEN -->
-<div id="screen-game" class="screen hidden">
-  <div class="game-hud">
-    <div class="hud-left">
-      <button class="back-btn" id="back-to-levels" style="position:relative;top:auto;left:auto">← Fases</button>
-      <div>
-        <div class="hud-title" id="hud-title">MUNDO 1 · FASE 1</div>
-        <div class="hud-moves">Movimentos: <span id="hud-moves">0</span> <span class="hud-diff-badge" id="hud-diff-badge"></span></div>
-      </div>
-    </div>
-    <div class="hud-right">
-      <button class="hud-btn grab-btn" id="btn-grab" onclick="toggleGrab()" title="Segurar Bloco (E)">🤝 Segurar</button>
-      <button class="hud-btn reset" id="btn-reset">↺ Reiniciar</button>
-    </div>
-  </div>
-  <div class="game-area">
-    <canvas id="game-canvas"></canvas>
-  </div>
-  <div class="game-controls-hint" id="game-controls-hint">
-    <span>WASD / ↑↓←→ mover</span>
-    <span>E segurar bloco</span>
-    <span>R reiniciar</span>
-  </div>
-  <!-- Expert Mode Command Input -->
-  <div class="expert-input-area" id="expert-input-area">
-    <div class="expert-hint" id="expert-hint">Selecione uma ação e depois o comando de direção</div>
-    <div class="expert-input-row">
-      <div class="expert-action-btns">
-        <button class="expert-action-btn" id="btn-action-mover" onclick="setExpertAction('mover')">⚡ MOVER</button>
-        <button class="expert-action-btn" id="btn-action-segurar" onclick="setExpertAction('segurar')">🤝 SEGURAR</button>
-      </div>
-      <input class="expert-cmd-input" id="expert-cmd-input" type="text" placeholder="direita / esquerda / cima / baixo" autocomplete="off" autocorrect="off" spellcheck="false">
-      <button class="expert-send-btn" onclick="submitExpertCommand()">▶ ENVIAR</button>
-    </div>
-    <div class="expert-feedback" id="expert-feedback"></div>
-  </div>
-</div>
-
-<!-- WIN OVERLAY -->
-<div id="win-overlay">
-  <div class="win-box">
-    <div class="win-title">FASE COMPLETA!</div>
-    <div class="win-sub" id="win-sub">Excelente!</div>
-    <div class="win-stars" id="win-stars">
-      <span class="win-star" id="wstar1">⭐</span>
-      <span class="win-star" id="wstar2">⭐</span>
-      <span class="win-star" id="wstar3">⭐</span>
-    </div>
-    <div class="win-moves">Movimentos: <b id="win-moves-val">0</b></div>
-    <div class="win-btns">
-      <button class="win-btn" id="btn-retry">↺ Tentar Novamente</button>
-      <button class="win-btn primary" id="btn-next">Próxima Fase →</button>
-    </div>
-  </div>
-</div>
-
-<!-- SETTINGS MODAL -->
-<div class="modal-overlay" id="settings-modal">
-  <div class="modal">
-    <h2>⚙️ CONFIGURAÇÕES</h2>
-    <div class="setting-row">
-      <label>Música</label>
-      <button class="toggle on" id="toggle-music" onclick="toggleMusic()"></button>
-    </div>
-    <div class="setting-row">
-      <label>Sons</label>
-      <button class="toggle on" id="toggle-sfx" onclick="toggleSfx()"></button>
-    </div>
-    <div class="slider-row">
-      <label>Volume Música: <span id="vol-music-val">70</span>%</label>
-      <input type="range" id="vol-music" min="0" max="100" value="70" oninput="setMusicVol(this.value)">
-    </div>
-    <div class="slider-row">
-      <label>Volume Sons: <span id="vol-sfx-val">80</span>%</label>
-      <input type="range" id="vol-sfx" min="0" max="100" value="80" oninput="setSfxVol(this.value)">
-    </div>
-    <button class="btn-danger" onclick="resetProgress()">🗑️ Resetar Progresso</button>
-    <button class="modal-close" onclick="closeSettings()">Fechar</button>
-  </div>
-</div>
-
-<!-- DEV MODE BADGE -->
-<div class="dev-badge" id="dev-badge">🔧 MODO DEV ATIVO</div>
-
-<!-- DEV MODE MODAL -->
-<div class="modal-overlay" id="dev-modal">
-  <div class="modal">
-    <h2>🔧 MODO DESENVOLVEDOR</h2>
-    <p style="color:var(--muted);font-size:0.95rem;margin-bottom:8px">Digite a senha para entrar no modo desenvolvedor:</p>
-    <input class="dev-input" type="password" id="dev-password-input" maxlength="10" placeholder="••••••" autocomplete="off">
-    <p id="dev-error-msg" style="color:var(--accent);font-size:0.9rem;min-height:20px;margin-bottom:8px;text-align:center;"></p>
-    <button class="dev-btn-enter" id="dev-enter-btn">🔓 Entrar</button>
-    <button class="modal-close" onclick="closeDevModal()">Cancelar</button>
-  </div>
-</div>
-
-<script>
 // ========================
 // LEVEL DATA
 // ========================
 // Tiles: 0=empty, 1=wall, 2=target, 3=box(in grid init only), 5=vine, 7=ice, 8=button, 9=door
 // Vines (5): box entering a vine tile gets stuck. Need 1 extra push to break free.
+
+// ========================
+// SPRITES (pixel art)
+// ========================
+// Convenção de nomes de arquivo — coloque os PNGs em /sprites/ com esses nomes:
+//   floor_<artType>.png / wall_<artType>.png  -> chão e parede de CADA MUNDO
+//   box_<artType>.png                          -> "bloco" (caixa empurrável) de CADA MUNDO
+//   player.png                                 -> PERSONAGEM (único, usado em todos os mundos)
+// artType de cada mundo está definido em WORLDS / WORLDS_EXPERT (earth, vine, ice, door, master, tutorial)
+// Se um arquivo não existir ou não carregar, o jogo automaticamente usa o desenho vetorial
+// original como reserva (ver spriteReady/drawSprite) — não precisa remover nada daqui.
+const SPRITE_FILES = {
+  // Chão e parede por mundo
+  floor_earth:    'sprites/floor_earth.png',
+  wall_earth:     'sprites/wall_earth.png',
+  floor_vine:     'sprites/floor_vine.png',
+  wall_vine:      'sprites/wall_vine.png',
+  floor_ice:      'sprites/floor_ice.png',
+  wall_ice:       'sprites/wall_ice.png',
+  floor_door:     'sprites/floor_door.png',
+  wall_door:      'sprites/wall_door.png',
+  floor_master:   'sprites/floor_master.png',
+  wall_master:    'sprites/wall_master.png',
+  floor_tutorial: 'sprites/floor_tutorial.png', // Mundo Tutorial Expert
+  wall_tutorial:  'sprites/wall_tutorial.png',
+
+  // Bloco (caixa empurrável) — mesmo sprite (estrela) em todos os mundos
+  box_earth:      'star.png',
+  box_vine:       'star.png',
+  box_ice:        'star.png',
+  box_door:       'star.png',
+  box_master:     'star.png',
+  box_tutorial:   'star.png',
+};
+const sprites = {};
+
+// Personagem — sprite direcional (um PNG por direção, trocado conforme o movimento)
+const playerSprites = { baixo: new Image(), cima: new Image(), direita: new Image(), esquerda: new Image() };
+playerSprites.baixo.src    = 'baixo.png';
+playerSprites.cima.src     = 'cima.png';
+playerSprites.direita.src  = 'direita.png';
+playerSprites.esquerda.src = 'esquerda.png';
+let playerFacing = 'baixo';
+let spritesLoaded = false; // vira true quando TODAS as imagens terminaram de tentar carregar (sucesso ou erro)
+(function loadSprites(){
+  const keys = Object.keys(SPRITE_FILES);
+  let loaded = 0;
+  keys.forEach(k=>{
+    const img = new Image();
+    img.onload  = ()=>{ loaded++; if(loaded===keys.length){ spritesLoaded = true; renderGame(); } };
+    img.onerror = ()=>{ loaded++; if(loaded===keys.length){ spritesLoaded = true; renderGame(); } };
+    img.src = SPRITE_FILES[k];
+    sprites[k] = img;
+  });
+})();
+
+// true somente se ESSA imagem específica carregou com sucesso (evita desenhar imagem quebrada)
+function spriteReady(key){
+  const img = sprites[key];
+  return !!(img && img.complete && img.naturalWidth > 0);
+}
+
+// Desenha o sprite se existir/carregou; retorna true se desenhou.
+// Se retornar false, quem chamou deve continuar com o desenho vetorial de reserva.
+function drawSprite(ctx, key, px, py, w, h){
+  if (!spriteReady(key)) return false;
+  ctx.drawImage(sprites[key], px, py, w, h);
+  return true;
+}
+
+// Descobre o artType (tema visual) do mundo pelo índice, na lista de mundos ativa (normal ou expert)
+function getArtTypeForWorld(wi){
+  const list = (typeof getActiveWorlds === 'function') ? getActiveWorlds() : WORLDS;
+  const w = list && list[wi];
+  return (w && w.artType) || 'earth';
+}
 
 const WORLDS = [
   {
@@ -1106,9 +115,9 @@ const LEVEL_DATA = [
     { w:7, h:5, playerStart:[1,2],
       grid:[
         [1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,1],
-        [1,0,4,3,0,2,1],
-        [1,0,0,0,0,0,1],
+        [1,0,0,0,1,0,1],
+        [1,0,4,3,1,2,1],
+        [1,0,0,0,1,0,1],
         [1,1,1,1,1,1,1]
       ], par:3 }
   ],
@@ -1443,7 +452,7 @@ let currentDifficulty = 'normal';
 // EASY MODE levels — shorter grids, fewer puzzles, gradual intro of mechanics
 const LEVEL_DATA_EASY = [
   // WORLD 1 - Basic (easy: very short intro)
-  [ { w:6, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1],[1,0,0,0,0,1],[1,0,4,3,2,1],[1,0,0,0,0,1],[1,1,1,1,1,1]], par:2 } ],
+  [ { w:6, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1],[1,0,0,1,0,1],[1,4,3,0,2,1],[1,0,0,1,0,1],[1,1,1,1,1,1]], par:2 } ],
   [ { w:6, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1],[1,0,0,0,0,1],[1,0,3,0,2,1],[1,0,0,0,0,1],[1,1,1,1,1,1]], par:3 } ],
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,3,1,0,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:5 } ],
   [ { w:7, h:6, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,2,0,0,1],[1,0,3,0,0,0,1],[1,0,0,0,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:5 } ],
@@ -2210,6 +1219,7 @@ function renderGame() {
   ctx2d.clearRect(0, 0, canvas.width, canvas.height);
 
   const t = Date.now() / 1000;
+  const artType = getArtTypeForWorld(gs.wi); // tema visual do mundo atual (sprites)
 
   // Sync grab button visual state
   const grabBtn = document.getElementById('btn-grab');
@@ -2228,19 +1238,23 @@ function renderGame() {
       const tile = gs.grid[y][x];
       const px = x * TILE, py = y * TILE;
 
-      // Floor
-      ctx2d.fillStyle = (x + y) % 2 === 0 ? '#1e1e2e' : '#262638';
-      ctx2d.fillRect(px, py, TILE, TILE);
-
-      if (tile === 1) { // Wall
-        ctx2d.fillStyle = '#374151';
+      // Floor — tenta sprite do mundo (floor_<artType>), senão usa o xadrez vetorial original
+      if (!drawSprite(ctx2d, `floor_${artType}`, px, py, TILE, TILE)) {
+        ctx2d.fillStyle = (x + y) % 2 === 0 ? '#1e1e2e' : '#262638';
         ctx2d.fillRect(px, py, TILE, TILE);
-        ctx2d.fillStyle = '#4b5563';
-        ctx2d.fillRect(px, py, TILE, 4);
-        ctx2d.fillRect(px, py, 4, TILE);
-        ctx2d.fillStyle = '#1f2937';
-        ctx2d.fillRect(px, py+TILE-4, TILE, 4);
-        ctx2d.fillRect(px+TILE-4, py, 4, TILE);
+      }
+
+      if (tile === 1) { // Wall — tenta sprite do mundo (wall_<artType>), senão usa o desenho vetorial original
+        if (!drawSprite(ctx2d, `wall_${artType}`, px, py, TILE, TILE)) {
+          ctx2d.fillStyle = '#374151';
+          ctx2d.fillRect(px, py, TILE, TILE);
+          ctx2d.fillStyle = '#4b5563';
+          ctx2d.fillRect(px, py, TILE, 4);
+          ctx2d.fillRect(px, py, 4, TILE);
+          ctx2d.fillStyle = '#1f2937';
+          ctx2d.fillRect(px, py+TILE-4, TILE, 4);
+          ctx2d.fillRect(px+TILE-4, py, 4, TILE);
+        }
       } else if (tile === 2) { // Target
         ctx2d.fillStyle = 'rgba(34,197,94,0.15)';
         ctx2d.fillRect(px, py, TILE, TILE);
@@ -2338,9 +1352,14 @@ function renderGame() {
   gs.boxes.forEach(box => {
     const px = box.x * TILE, py = box.y * TILE;
     const onTarget = gs.grid[box.y][box.x] === 2;
+    // Bloco (caixa) — tenta sprite do mundo (box_<artType>); o anel/estrela verde de "no alvo"
+    // é sempre desenhado por cima, mesmo quando o sprite é usado, para manter o feedback visual.
+    const boxSpriteDrawn = drawSprite(ctx2d, `box_${artType}`, px+4, py+4, TILE-8, TILE-8);
     if (onTarget) {
-      ctx2d.fillStyle = '#854d0e';
-      ctx2d.fillRect(px+4, py+4, TILE-8, TILE-8);
+      if (!boxSpriteDrawn) {
+        ctx2d.fillStyle = '#854d0e';
+        ctx2d.fillRect(px+4, py+4, TILE-8, TILE-8);
+      }
       ctx2d.fillStyle = '#22c55e';
       ctx2d.lineWidth = 3;
       ctx2d.strokeRect(px+6, py+6, TILE-12, TILE-12);
@@ -2350,17 +1369,19 @@ function renderGame() {
       ctx2d.textBaseline = 'middle';
       ctx2d.fillText('✦', px+TILE/2, py+TILE/2);
     } else {
-      const grad = ctx2d.createLinearGradient(px, py, px+TILE, py+TILE);
-      grad.addColorStop(0, '#fbbf24');
-      grad.addColorStop(1, '#d97706');
-      ctx2d.fillStyle = grad;
-      ctx2d.fillRect(px+4, py+4, TILE-8, TILE-8);
-      ctx2d.fillStyle = '#fde68a';
-      ctx2d.fillRect(px+4, py+4, TILE-8, 5);
-      ctx2d.fillRect(px+4, py+4, 5, TILE-8);
-      ctx2d.fillStyle = '#92400e';
-      ctx2d.fillRect(px+4, py+TILE-9, TILE-8, 5);
-      ctx2d.fillRect(px+TILE-9, py+4, 5, TILE-8);
+      if (!boxSpriteDrawn) {
+        const grad = ctx2d.createLinearGradient(px, py, px+TILE, py+TILE);
+        grad.addColorStop(0, '#fbbf24');
+        grad.addColorStop(1, '#d97706');
+        ctx2d.fillStyle = grad;
+        ctx2d.fillRect(px+4, py+4, TILE-8, TILE-8);
+        ctx2d.fillStyle = '#fde68a';
+        ctx2d.fillRect(px+4, py+4, TILE-8, 5);
+        ctx2d.fillRect(px+4, py+4, 5, TILE-8);
+        ctx2d.fillStyle = '#92400e';
+        ctx2d.fillRect(px+4, py+TILE-9, TILE-8, 5);
+        ctx2d.fillRect(px+TILE-9, py+4, 5, TILE-8);
+      }
       // If stuck in vine, draw vine overlay
       if (box.stuck > 0) {
         ctx2d.strokeStyle = '#16a34a';
@@ -2456,6 +1477,16 @@ function drawPlayer(ctx, px, py, t, wi) {
   ctx.ellipse(0, TILE/2-8, 14, 5, 0, 0, Math.PI*2);
   ctx.fill();
 
+  // Personagem — sprite direcional conforme a direção do último movimento; se não carregou, usa o desenho vetorial original
+  const facingSprite = playerSprites[playerFacing] || playerSprites.baixo;
+  if (facingSprite && facingSprite.complete && facingSprite.naturalWidth > 0) {
+    const size = TILE * 1.15;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(facingSprite, -size/2, -size/2, size, size);
+    ctx.restore();
+    return;
+  }
+
   // Body
   const bodyGrad = ctx.createRadialGradient(-4, -6, 2, 0, 0, 18);
   bodyGrad.addColorStop(0, '#ff6b6b');
@@ -2543,6 +1574,12 @@ function slideOnIce(gs, x, y, dx, dy, isBox) {
 function tryMove(dx, dy) {
   if (!gameState) return;
   const gs = gameState;
+
+  // Update facing direction based on movement input (para trocar o sprite direcional)
+  if (dx === 1) playerFacing = 'direita';
+  else if (dx === -1) playerFacing = 'esquerda';
+  else if (dy === 1) playerFacing = 'baixo';
+  else if (dy === -1) playerFacing = 'cima';
 
   // === GRAB MODE: move player + grabbed box together ===
   if (grabbedBox) {
@@ -3094,6 +2131,3 @@ if (!saveData.worlds[0]) saveData.worlds[0] = { unlocked: true, levels: [{unlock
 saveData.worlds[0].unlocked = true;
 saveData.worlds[0].levels[0].unlocked = true;
 persistSave();
-</script>
-</body>
-</html>
