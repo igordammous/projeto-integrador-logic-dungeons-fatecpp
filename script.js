@@ -2131,3 +2131,9 @@ if (!saveData.worlds[0]) saveData.worlds[0] = { unlocked: true, levels: [{unlock
 saveData.worlds[0].unlocked = true;
 saveData.worlds[0].levels[0].unlocked = true;
 persistSave();
+<<<<<<<< HEAD:script.js
+========
+</script>
+</body>
+</html>
+>>>>>>>> 3376faf119652d06686978f1f2e4ec01752345a8:index.html
