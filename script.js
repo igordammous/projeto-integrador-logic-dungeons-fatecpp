@@ -144,33 +144,8 @@ const LEVEL_DATA = [
         [1,1,1,1,1,1,1,1,1]
       ], par:7 }
   ],
-  [ // 1-4
-    { w:9, h:7, playerStart:[1,2],
-      grid:[
-        [1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,2,0,0,0,1],
-        [1,0,0,0,0,0,0,0,1],
-        [1,0,3,0,1,0,3,0,1],
-        [1,0,0,0,0,0,0,0,1],
-        [1,0,0,2,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1]
-      ], par:10 }
-  ],
-  [ // 1-5
-    { w:10, h:8, playerStart:[2,4],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,1,0,2,0,2,0,0,1],
-        [1,0,0,0,0,1,0,0,0,1],
-        [1,0,3,0,0,0,3,0,0,1],
-        [1,0,0,0,1,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]
-      ], par:12 }
-  ],
 
-  // WORLD 2 - Vines (5=vine, box needs 2 pushes to move through: first push sticks, second breaks free)
+  // WORLD 2 - Vines
   [ // 2-1: Single vine intro
     { w:9, h:7, playerStart:[1,3],
       grid:[
@@ -207,33 +182,6 @@ const LEVEL_DATA = [
         [1,3,0,0,0,0,0,0,0,1],
         [1,1,1,1,1,1,1,1,1,1]
       ], par:10 }
-  ],
-  [ // 2-4: Two boxes, both have vines blocking path
-    { w:10, h:8, playerStart:[1,3],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,2,0,0,2,0,0,1],
-        [1,0,1,0,1,1,0,1,0,1],
-        [1,0,0,3,5,5,3,0,0,1],
-        [1,0,1,0,0,0,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]
-      ], par:12 }
-  ],
-  [ // 2-5: Vine maze
-    { w:11, h:9, playerStart:[1,7],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,2,0,0,0,2,0,0,1],
-        [1,0,1,0,1,5,1,0,1,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,0,5,1,0,0,0,1,5,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,3,0,5,1,0,1,5,0,3,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1]
-      ], par:16 }
   ],
 
   // WORLD 3 - Ice (7=ice)
@@ -274,33 +222,6 @@ const LEVEL_DATA = [
         [1,1,1,1,1,1,1,1,1,1]
       ], par:9 }
   ],
-  [ // 3-4
-    { w:10, h:8, playerStart:[8,6],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,0,2,0,2,0,0,0,0,1],
-        [1,0,7,7,7,1,7,7,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,7,1,7,7,7,1,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,3,0,3,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]
-      ], par:11 }
-  ],
-  [ // 3-5
-    { w:11, h:9, playerStart:[5,7],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,2,0,0,0,0,0,2,0,1],
-        [1,0,7,7,1,7,7,1,7,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,0,7,1,7,7,7,1,7,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,0,7,7,7,1,7,7,7,0,1],
-        [1,0,3,0,0,0,3,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1]
-      ], par:15 }
-  ],
 
   // WORLD 4 - Buttons/Doors (8=button, 9=door)
   [ // 4-1
@@ -339,33 +260,6 @@ const LEVEL_DATA = [
         [1,0,3,0,0,0,8,0,0,1],
         [1,1,1,1,1,1,1,1,1,1]
       ], par:9, doorLinks:[[3,2],[5,2]], buttonLinks:[[4,4],[6,6]] }
-  ],
-  [ // 4-4
-    { w:10, h:8, playerStart:[1,3],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,2,0,2,0,0,0,1],
-        [1,0,1,9,1,9,1,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,0,8,1,0,1,8,0,0,1],
-        [1,0,0,0,0,0,0,0,0,1],
-        [1,3,0,0,0,3,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1]
-      ], par:12, doorLinks:[[3,2],[5,2]], buttonLinks:[[2,4],[6,4]] }
-  ],
-  [ // 4-5
-    { w:11, h:9, playerStart:[5,7],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,2,0,2,0,2,0,0,0,1],
-        [1,0,9,1,9,1,9,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,0,8,1,8,1,8,0,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,0,0,3,0,3,0,3,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1]
-      ], par:16, doorLinks:[[2,2],[4,2],[6,2]], buttonLinks:[[2,4],[4,4],[6,4]] }
   ],
 
   // WORLD 5 - Master (all mechanics: ice, buttons, doors, vines)
@@ -409,40 +303,8 @@ const LEVEL_DATA = [
         [1,0,3,0,0,0,0,0,3,0,1],
         [1,1,1,1,1,1,1,1,1,1,1]
       ], par:16, doorLinks:[[2,2],[8,2]], buttonLinks:[[2,6],[8,6]] }
-  ],
-  [ // 5-4
-    { w:12, h:10, playerStart:[6,8],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,2,0,0,0,2,0,0,0,1],
-        [1,0,1,9,1,0,1,9,1,0,0,1],
-        [1,0,0,0,0,5,0,0,0,0,0,1],
-        [1,0,7,1,7,7,7,1,7,0,0,1],
-        [1,0,0,0,0,5,0,0,0,0,0,1],
-        [1,0,1,8,1,0,1,8,1,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,3,0,0,0,0,3,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1]
-      ], par:18, doorLinks:[[3,2],[7,2]], buttonLinks:[[3,6],[7,6]] }
-  ],
-  [ // 5-5 EPIC FINAL
-    { w:13, h:11, playerStart:[6,9],
-      grid:[
-        [1,1,1,1,1,1,1,1,1,1,1,1,1],
-        [1,0,0,2,0,0,0,0,2,0,0,0,1],
-        [1,0,1,9,1,0,0,1,9,1,0,0,1],
-        [1,0,0,0,0,5,0,0,0,0,0,0,1],
-        [1,0,7,1,7,7,1,7,7,1,7,0,1],
-        [1,0,0,0,0,5,0,0,0,0,0,0,1],
-        [1,0,1,8,1,0,0,1,8,1,0,0,1],
-        [1,0,0,0,0,0,0,0,0,0,0,0,1],
-        [1,0,7,7,5,0,0,5,7,7,0,0,1],
-        [1,0,3,0,0,0,0,0,3,0,0,0,1],
-        [1,1,1,1,1,1,1,1,1,1,1,1,1]
-      ], par:22, doorLinks:[[3,2],[8,2]], buttonLinks:[[3,6],[8,6]] }
   ]
 ];
-
 // ========================
 // DIFFICULTY SYSTEM
 // ========================
@@ -455,81 +317,61 @@ const LEVEL_DATA_EASY = [
   [ { w:6, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1],[1,0,0,1,0,1],[1,4,3,0,2,1],[1,0,0,1,0,1],[1,1,1,1,1,1]], par:2 } ],
   [ { w:6, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1],[1,0,0,0,0,1],[1,0,3,0,2,1],[1,0,0,0,0,1],[1,1,1,1,1,1]], par:3 } ],
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,3,1,0,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:5 } ],
-  [ { w:7, h:6, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,2,0,0,1],[1,0,3,0,0,0,1],[1,0,0,0,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:5 } ],
-  [ { w:8, h:6, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,1],[1,0,1,0,2,0,0,1],[1,0,0,3,0,0,0,1],[1,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1]], par:6 } ],
 
   // WORLD 2 - Vines (easy: single vine obstacle)
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,3,5,0,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:4 } ],
   [ { w:7, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1],[1,0,0,2,0,0,1],[1,0,0,0,0,0,1],[1,0,1,5,0,0,1],[1,0,3,0,0,0,1],[1,1,1,1,1,1,1]], par:5 } ],
   [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,1],[1,0,1,0,0,0,0,1],[1,0,5,0,1,0,0,1],[1,0,3,0,0,0,0,1],[1,1,1,1,1,1,1,1]], par:6 } ],
-  [ { w:8, h:6, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1],[1,0,0,2,0,2,0,1],[1,0,1,0,1,0,0,1],[1,0,0,3,5,3,0,1],[1,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1]], par:8 } ],
-  [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,2,0,2,0,0,1],[1,0,1,0,1,0,1,0,1],[1,0,0,5,0,5,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,3,0,0,3,0,0,1],[1,1,1,1,1,1,1,1,1]], par:10 } ],
 
   // WORLD 3 - Ice (easy: short ice run)
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,3,7,7,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:3 } ],
   [ { w:7, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1],[1,0,0,2,0,0,1],[1,0,7,7,7,0,1],[1,0,0,0,0,0,1],[1,0,3,0,0,0,1],[1,1,1,1,1,1,1]], par:4 } ],
   [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,2,0,2,0,0,1],[1,0,7,7,7,7,0,1],[1,0,0,0,0,0,0,1],[1,0,3,0,3,0,0,1],[1,1,1,1,1,1,1,1]], par:6 } ],
-  [ { w:8, h:6, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,1],[1,7,7,1,7,7,0,1],[1,0,0,3,0,0,0,1],[1,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1]], par:5 } ],
-  [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,2,0,2,0,0,1],[1,0,7,7,1,7,7,0,1],[1,0,0,0,0,0,0,0,1],[1,0,7,1,7,7,1,0,1],[1,0,3,0,0,3,0,0,1],[1,1,1,1,1,1,1,1,1]], par:8 } ],
 
   // WORLD 4 - Doors (easy: 1 button 1 door simple)
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,3,9,0,2,1],[1,0,0,8,0,0,1],[1,1,1,1,1,1,1]], par:5, doorLinks:[[3,2]], buttonLinks:[[3,3]] } ],
   [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,1],[1,0,1,9,0,0,0,1],[1,0,0,0,0,0,0,1],[1,0,3,0,8,0,0,1],[1,1,1,1,1,1,1,1]], par:6, doorLinks:[[3,2]], buttonLinks:[[4,4]] } ],
   [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,1],[1,0,9,0,9,0,0,1],[1,0,0,0,0,0,0,1],[1,0,3,8,0,0,0,1],[1,1,1,1,1,1,1,1]], par:7, doorLinks:[[2,2],[4,2]], buttonLinks:[[3,4]] } ],
-  [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,1],[1,0,1,9,0,9,1,0,1],[1,0,0,0,0,0,0,0,1],[1,0,8,1,0,1,8,0,1],[1,0,3,0,0,0,3,0,1],[1,1,1,1,1,1,1,1,1]], par:9, doorLinks:[[3,2],[5,2]], buttonLinks:[[2,4],[6,4]] } ],
-  [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,2,0,2,0,0,0,1],[1,0,9,1,9,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,8,1,8,0,0,0,1],[1,0,3,0,3,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:11, doorLinks:[[2,2],[4,2]], buttonLinks:[[2,4],[4,4]] } ],
 
   // WORLD 5 - Master (easy: 1 mechanic combo per level)
   [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,1],[1,0,1,9,0,0,0,1],[1,0,0,7,7,5,0,1],[1,0,3,0,8,0,0,1],[1,1,1,1,1,1,1,1]], par:8, doorLinks:[[3,2]], buttonLinks:[[4,4]] } ],
   [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,0,1],[1,0,1,9,0,0,0,0,1],[1,0,0,0,5,0,0,0,1],[1,0,7,7,8,7,0,0,1],[1,0,3,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:9, doorLinks:[[3,2]], buttonLinks:[[4,4]] } ],
   [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,2,0,0,2,0,0,1],[1,0,9,1,1,9,0,0,1],[1,0,0,5,5,0,0,0,1],[1,0,7,7,0,7,0,0,1],[1,0,3,0,0,3,0,0,1],[1,1,1,1,1,1,1,1,1]], par:11, doorLinks:[[2,2],[5,2]], buttonLinks:[[3,3],[4,3]] } ],
-  [ { w:10, h:8, playerStart:[1,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,2,0,0,2,0,0,1],[1,0,1,9,1,1,9,1,0,1],[1,0,0,0,5,5,0,0,0,1],[1,0,7,7,0,0,7,7,0,1],[1,0,0,0,8,8,0,0,0,1],[1,0,3,0,0,0,3,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:13, doorLinks:[[3,2],[6,2]], buttonLinks:[[4,5],[5,5]] } ],
-  [ { w:10, h:8, playerStart:[5,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,2,0,0,0,0,2,0,1],[1,0,9,1,0,0,1,9,0,1],[1,0,0,0,5,5,0,0,0,1],[1,0,7,1,7,7,1,7,0,1],[1,0,0,0,8,8,0,0,0,1],[1,0,3,0,0,0,3,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:14, doorLinks:[[2,2],[7,2]], buttonLinks:[[4,5],[5,5]] } ],
 ];
 
 // NORMAL MODE levels — same worlds as original but with enhanced, more complex layouts
 // requiring full use of the world's mechanics
 const LEVEL_DATA_NORMAL = [
-  // WORLD 1 - Basic (more strategic pushing, walls forcing detours)
+  // WORLD 1 - Basic
   [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,1],[1,0,1,0,1,0,0,1],[1,0,0,0,0,0,0,1],[1,0,0,3,1,0,0,1],[1,1,1,1,1,1,1,1]], par:5 } ],
   [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,1],[1,0,1,1,0,1,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,1,0,1,0,1,0,1],[1,0,0,3,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:7 } ],
   [ { w:9, h:7, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,1,1,1,0,2,0,1],[1,0,0,0,3,0,0,0,1],[1,0,1,0,1,1,1,0,1],[1,0,0,0,0,0,2,0,1],[1,1,1,1,1,1,1,1,1]], par:9 } ],
-  [ { w:10, h:8, playerStart:[1,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,2,0,0,1],[1,0,1,1,0,1,0,1,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,0,1,1,1,0,1,1],[1,0,0,3,0,0,3,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:12 } ],
-  [ { w:11, h:9, playerStart:[2,7], grid:[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,2,0,0,0,1],[1,0,1,1,0,1,0,1,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,1,0,1,0,1,0,1,0,1],[1,0,0,3,0,0,0,3,0,0,1],[1,0,1,0,1,1,1,0,1,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]], par:14 } ],
 
-  // WORLD 2 - Vines (normal: must use vine tension to position box, multiple vines on path)
+  // WORLD 2 - Vines
   [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,1],[1,0,1,5,0,1,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,1,0,5,0,1,0,1],[1,0,3,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:8 } ],
   [ { w:9, h:7, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,2,0,1],[1,0,1,5,0,5,0,1,1],[1,0,3,0,0,0,0,0,1],[1,0,0,5,1,5,0,0,1],[1,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:11 } ],
   [ { w:10, h:8, playerStart:[1,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,0,0,1],[1,0,1,0,5,5,0,1,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,5,1,0,0,1,5,0,1],[1,0,0,0,0,0,0,0,0,1],[1,3,0,5,1,1,5,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:13 } ],
-  [ { w:10, h:8, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,2,0,0,2,0,0,1],[1,0,1,0,5,5,0,1,0,1],[1,0,3,0,0,0,0,3,0,1],[1,0,0,5,1,1,5,0,0,1],[1,0,1,0,0,0,0,1,0,1],[1,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:14 } ],
-  [ { w:11, h:9, playerStart:[5,7], grid:[[1,1,1,1,1,1,1,1,1,1,1],[1,0,2,0,0,0,0,0,2,0,1],[1,0,0,5,1,5,5,1,5,0,1],[1,0,1,0,0,0,0,0,0,1,1],[1,0,0,5,1,0,1,5,0,0,1],[1,0,1,0,0,0,0,0,1,0,1],[1,3,0,5,0,1,0,5,0,3,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]], par:18 } ],
 
-  // WORLD 3 - Ice (normal: ice slides force routing, boxes must be positioned precisely)
+  // WORLD 3 - Ice
   [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,1],[1,0,1,7,7,7,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,7,7,1,7,0,0,1],[1,0,3,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:7 } ],
   [ { w:9, h:7, playerStart:[1,1], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,7,7,7,0,7,7,0,1],[1,0,0,3,0,0,0,0,1],[1,7,7,0,7,7,7,0,1],[1,0,0,0,0,0,2,0,1],[1,1,1,1,1,1,1,1,1]], par:8 } ],
   [ { w:10, h:8, playerStart:[1,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,2,0,0,0,0,0,0,0,1],[1,7,7,1,7,7,7,7,0,1],[1,0,0,0,0,0,0,0,0,1],[1,7,7,1,7,7,0,7,0,1],[1,0,0,0,0,0,0,1,0,1],[1,0,3,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:10 } ],
-  [ { w:10, h:8, playerStart:[8,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,2,0,2,0,0,0,0,1],[1,0,7,7,7,1,7,7,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,7,1,7,7,7,1,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,3,0,3,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:12 } ],
-  [ { w:11, h:9, playerStart:[5,7], grid:[[1,1,1,1,1,1,1,1,1,1,1],[1,0,2,0,0,0,0,0,2,0,1],[1,0,7,7,1,7,7,1,7,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,7,1,7,7,7,1,7,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,7,7,7,1,7,7,7,0,1],[1,0,3,0,0,0,3,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]], par:16 } ],
 
-  // WORLD 4 - Doors (normal: must push box onto button, then pass through door to reach target)
+  // WORLD 4 - Doors
   [ { w:9, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,1],[1,0,1,9,0,0,0,0,1],[1,0,0,0,0,0,0,0,1],[1,0,1,0,8,0,0,0,1],[1,0,3,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:7, doorLinks:[[3,2]], buttonLinks:[[4,4]] } ],
   [ { w:9, h:7, playerStart:[1,1], grid:[[1,1,1,1,1,1,1,1,1],[1,0,0,0,0,0,0,0,1],[1,0,8,1,9,0,2,0,1],[1,0,0,1,0,0,0,0,1],[1,0,3,1,0,0,0,0,1],[1,0,0,8,0,0,0,0,1],[1,1,1,1,1,1,1,1,1]], par:9, doorLinks:[[4,2]], buttonLinks:[[2,2],[3,5]] } ],
   [ { w:10, h:8, playerStart:[1,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,0,1],[1,0,1,9,0,9,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,1,1,8,1,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,3,0,0,0,8,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:11, doorLinks:[[3,2],[5,2]], buttonLinks:[[4,4],[6,6]] } ],
-  [ { w:10, h:8, playerStart:[1,3], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,2,0,2,0,0,0,1],[1,0,1,9,1,9,1,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,8,1,0,1,8,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,3,0,0,0,3,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:13, doorLinks:[[3,2],[5,2]], buttonLinks:[[2,4],[6,4]] } ],
-  [ { w:11, h:9, playerStart:[5,7], grid:[[1,1,1,1,1,1,1,1,1,1,1],[1,0,2,0,2,0,2,0,0,0,1],[1,0,9,1,9,1,9,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,8,1,8,1,8,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,0,3,0,3,0,3,0,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]], par:17, doorLinks:[[2,2],[4,2],[6,2]], buttonLinks:[[2,4],[4,4],[6,4]] } ],
 
-  // WORLD 5 - Master normal (all mechanics combined, heavier)
+  // WORLD 5 - Master
   [ { w:10, h:8, playerStart:[1,6], grid:[[1,1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,0,0,1],[1,0,1,9,0,0,0,0,0,1],[1,0,0,5,0,0,0,0,0,1],[1,0,7,7,8,7,5,0,0,1],[1,0,0,0,0,0,0,0,0,1],[1,0,3,0,0,0,0,0,0,1],[1,1,1,1,1,1,1,1,1,1]], par:11, doorLinks:[[3,2]], buttonLinks:[[4,4]] } ],
   [ { w:11, h:9, playerStart:[1,7], grid:[[1,1,1,1,1,1,1,1,1,1,1],[1,0,0,0,2,0,2,0,0,0,1],[1,0,1,9,0,1,9,0,0,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,7,5,7,0,7,5,7,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,8,0,0,1,0,8,0,0,1],[1,0,3,0,0,0,0,3,0,0,1],[1,1,1,1,1,1,1,1,1,1,1]], par:15, doorLinks:[[3,2],[6,2]], buttonLinks:[[2,6],[7,6]] } ],
   [ { w:11, h:9, playerStart:[5,7], grid:[[1,1,1,1,1,1,1,1,1,1,1],[1,0,2,0,0,0,0,0,2,0,1],[1,0,9,0,1,0,1,0,9,0,1],[1,0,0,5,0,0,0,5,0,0,1],[1,0,7,7,1,7,1,7,7,0,1],[1,0,0,0,0,0,0,0,0,0,1],[1,0,8,0,1,0,1,0,8,0,1],[1,0,3,0,0,0,0,0,3,0,1],[1,1,1,1,1,1,1,1,1,1,1]], par:17, doorLinks:[[2,2],[8,2]], buttonLinks:[[2,6],[8,6]] } ],
-  [ { w:12, h:10, playerStart:[6,8], grid:[[1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,2,0,0,0,1],[1,0,1,9,1,0,1,9,1,0,0,1],[1,0,0,0,0,5,0,0,0,0,0,1],[1,0,7,1,7,7,7,1,7,0,0,1],[1,0,0,0,0,5,0,0,0,0,0,1],[1,0,1,8,1,0,1,8,1,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,1],[1,0,3,0,0,0,0,3,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1,1]], par:19, doorLinks:[[3,2],[7,2]], buttonLinks:[[3,6],[7,6]] } ],
-  [ { w:13, h:11, playerStart:[6,9], grid:[[1,1,1,1,1,1,1,1,1,1,1,1,1],[1,0,0,2,0,0,0,0,2,0,0,0,1],[1,0,1,9,1,0,0,1,9,1,0,0,1],[1,0,0,0,0,5,0,0,0,0,0,0,1],[1,0,7,1,7,7,1,7,7,1,7,0,1],[1,0,0,0,0,5,0,0,0,0,0,0,1],[1,0,1,8,1,0,0,1,8,1,0,0,1],[1,0,0,0,0,0,0,0,0,0,0,0,1],[1,0,7,7,5,0,0,5,7,7,0,0,1],[1,0,3,0,0,0,0,0,3,0,0,0,1],[1,1,1,1,1,1,1,1,1,1,1,1,1]], par:23, doorLinks:[[3,2],[8,2]], buttonLinks:[[3,6],[8,6]] } ],
 ];
 
 // EXPERT MODE — Tutorial world (world 0) + same levels as normal but arrow keys disabled
 // Tutorial world teaches command-based movement
 const EXPERT_TUTORIAL_LEVELS = [
-  // Tutorial 1: Move right — walk to reach the box and push it to target
+  // Tutorial 1: Move right
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,4,0,3,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:99,
       tutorialMsg:'👋 Bem-vindo ao Modo Expert! Selecione "MOVER" e digite "direita" para se mover. Empurre a caixa até o alvo verde!' } ],
   // Tutorial 2: Move with box
@@ -538,25 +380,415 @@ const EXPERT_TUTORIAL_LEVELS = [
   // Tutorial 3: Grab
   [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,4,3,0,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:99,
       tutorialMsg:'🤝 Aprenda a SEGURAR! Fique ao lado da caixa, selecione "SEGURAR" e envie. Depois mova com "mover" para arrastar a caixa.' } ],
-  // Tutorial 4: Multi-direction
-  [ { w:7, h:7, playerStart:[1,5], grid:[[1,1,1,1,1,1,1],[1,0,0,2,0,0,1],[1,0,1,0,1,0,1],[1,0,0,0,0,0,1],[1,0,1,3,1,0,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:99,
-      tutorialMsg:'⬆️ Pratique todas as direções! Use "mover cima", "mover baixo", "mover esquerda" e "mover direita" para alcançar o alvo.' } ],
-  // Tutorial 5: Full challenge
-  [ { w:8, h:6, playerStart:[1,4], grid:[[1,1,1,1,1,1,1,1],[1,0,0,0,2,0,0,1],[1,0,1,0,0,1,0,1],[1,0,0,0,0,0,0,1],[1,0,3,0,1,0,0,1],[1,1,1,1,1,1,1,1]], par:99,
-      tutorialMsg:'🏁 Desafio final do tutorial! Use tudo que aprendeu para colocar a caixa no alvo. Boa sorte!' } ],
 ];
 
-// Expert uses LEVEL_DATA_NORMAL for worlds 1-5, but world 0 is tutorial
-function getLevelData(wi, li) {
-  if (currentDifficulty === 'easy') {
-    return LEVEL_DATA_EASY[wi * 5 + li];
-  } else if (currentDifficulty === 'normal') {
-    return LEVEL_DATA_NORMAL[wi * 5 + li];
-  } else if (currentDifficulty === 'expert') {
-    if (wi === 0) return EXPERT_TUTORIAL_LEVELS[li];
-    return LEVEL_DATA_NORMAL[(wi - 1) * 5 + li]; // shift worlds by 1
+// ========================
+// PROCEDURAL LEVEL GENERATOR (v2 com BFS)
+// ========================
+// Regras:
+// 1) Bordas do grid são sempre 1 (parede)
+// 2) Distância Manhattan entre caixa (3) e alvo (2) é garantida por dificuldade
+// 3) Player nasce sempre no mesmo lugar (canto superior esquerdo interno)
+// 4) Paredes internas são colocadas com moderação e verificadas por BFS
+// 5) Gelo (7), vinhas (5) e portas (9)/botões (8) aparecem conforme mundo/dificuldade
+// 6) A fase só é retornada se passar na verificação BFS de solvabilidade
+
+function mulberry32(seed) {
+  return function() {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const PROC_CONFIG = {
+  easy:   { w: 8,  h: 6,  minDist: 2, maxDist: 5,  parBase: 6,  parPerDist: 2, wallChance: 0.05 },
+  normal: { w: 10, h: 8,  minDist: 3, maxDist: 7,  parBase: 8,  parPerDist: 2, wallChance: 0.08 },
+  expert: { w: 10, h: 8,  minDist: 4, maxDist: 8,  parBase: 9,  parPerDist: 2, wallChance: 0.10 },
+};
+
+// Quais mecânicas cada mundo usa (além de caixa/alvo/player)
+// easy    → fases simples
+// normal  → introduz mecânicas gradualmente
+// expert  → todas as mecânicas desde cedo
+const WORLD_MECHANICS = {
+  easy: [
+    { ice: 0, vines: 0, doors: 0 }, // Mundo 0 - básico
+    { ice: 0, vines: 1, doors: 0 }, // Mundo 1 - ainda básico no easy
+    { ice: 1, vines: 0, doors: 0 }, // Mundo 2 - gelo
+    { ice: 0, vines: 0, doors: 1 }, // Mundo 3 - portas
+    { ice: 1, vines: 1, doors: 1 }, // Mundo 4 - combo leve
+  ],
+  normal: [
+    { ice: 0, vines: 0, doors: 0 },
+    { ice: 0, vines: 1, doors: 0 },
+    { ice: 1, vines: 0, doors: 0 },
+    { ice: 0, vines: 0, doors: 1 },
+    { ice: 1, vines: 1, doors: 1 },
+  ],
+  expert: [
+    { ice: 1, vines: 0, doors: 0 }, // Tutorial expert não usa gerador, mas por segurança
+    { ice: 0, vines: 1, doors: 0 },
+    { ice: 1, vines: 0, doors: 0 },
+    { ice: 0, vines: 0, doors: 1 },
+    { ice: 1, vines: 1, doors: 1 },
+  ],
+};
+
+function getProcConfig(wi, li) {
+  const base = { ...PROC_CONFIG[currentDifficulty] };
+  const growth = li + wi * 0.3;
+  // Tetos maiores para acomodar o +1 coluna/linha base
+  base.w = Math.min(15, base.w + Math.floor(growth * 0.5));
+  base.h = Math.min(13, base.h + Math.floor(growth * 0.4));
+  const maxPossible = (base.w - 2) + (base.h - 2);
+  base.minDist = Math.min(base.minDist + Math.floor(growth * 0.6), maxPossible - 2);
+  base.maxDist = Math.min(base.maxDist + Math.floor(growth * 0.8), maxPossible - 1);
+  return base;
+}
+
+function getWorldMechanics(wi) {
+  const table = WORLD_MECHANICS[currentDifficulty] || WORLD_MECHANICS.normal;
+  return table[wi] || { ice: 0, vines: 0, doors: 0 };
+}
+
+function hashSeed(difficulty, wi, li) {
+  const s = `${difficulty}:${wi}:${li}`;
+  let hash = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    hash ^= s.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
   }
-  return LEVEL_DATA[wi * 5 + li];
+  return hash >>> 0;
+}
+
+// ========================
+// BFS DE SOLVABILIDADE
+// ========================
+// Verifica se é possível empurrar a caixa até o alvo, considerando gelo.
+// Estado: (playerX, playerY, boxX, boxY)
+// Movimento: player anda em 4 direções; se empurrar caixa, a caixa se move (com gelo deslizando).
+// Portas: tratadas como parede para o BFS (o BFS assume portas fechadas — conservador).
+// Vinhas: tratadas como chão normal no BFS (o BFS não modela o "stuck" para simplificar —
+//          se o BFS achar solução sem vinhas, com vinhas também acha, só com mais passos).
+
+function isWalkableBFS(grid, x, y, w, h) {
+  if (x < 0 || y < 0 || x >= w || y >= h) return false;
+  const t = grid[y][x];
+  if (t === 1) return false;   // parede
+  if (t === 9) return false;   // porta (conservador: BFS assume fechada)
+  if (t === 10) return false;  // boss (não usado no gerador atual)
+  return true;
+}
+
+// Aplica deslizamento no gelo para a caixa
+function slideBoxBFS(grid, bx, by, dx, dy, w, h) {
+  let x = bx, y = by;
+  while (true) {
+    const nx = x + dx, ny = y + dy;
+    if (!isWalkableBFS(grid, nx, ny, w, h)) break;
+    x = nx; y = ny;
+    if (grid[y][x] !== 7) break; // parou de deslizar ao sair do gelo
+  }
+  return { x, y };
+}
+
+function isSolvable(level) {
+  const { grid, playerStart, w, h } = level;
+
+  // Localizar caixa e alvo(s)
+  let box = null;
+  const targets = [];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const t = grid[y][x];
+      if (t === 3) box = { x, y };
+      else if (t === 2) targets.push({ x, y });
+    }
+  }
+  if (!box || targets.length === 0) return false;
+
+  // Se já está no alvo, trivially solucionável
+  if (targets.some(t => t.x === box.x && t.y === box.y)) return true;
+
+  const targetSet = new Set(targets.map(t => `${t.x},${t.y}`));
+  const visited = new Set();
+  const queue = [{ px: playerStart[0], py: playerStart[1], bx: box.x, by: box.y }];
+  visited.add(`${playerStart[0]},${playerStart[1]},${box.x},${box.y}`);
+
+  const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
+  let iterations = 0;
+  const MAX_ITER = 200000;
+
+  while (queue.length > 0) {
+    if (++iterations > MAX_ITER) return false; // segurança contra loop infinito
+    const { px, py, bx, by } = queue.shift();
+
+    for (const [dx, dy] of dirs) {
+      const npx = px + dx, npy = py + dy;
+
+      // Caso 1: player anda livremente (sem caixa)
+      if (!(npx === bx && npy === by)) {
+        if (isWalkableBFS(grid, npx, npy, w, h)) {
+          const key = `${npx},${npy},${bx},${by}`;
+          if (!visited.has(key)) {
+            visited.add(key);
+            queue.push({ px: npx, py: npy, bx, by });
+          }
+        }
+        continue;
+      }
+
+      // Caso 2: player empurra a caixa
+      const bnx = bx + dx, bny = by + dy;
+      if (!isWalkableBFS(grid, bnx, bny, w, h)) continue;
+
+      // Aplica deslizamento se a caixa entrar em gelo
+      let fbx = bnx, fby = bny;
+      if (grid[bny][bnx] === 7) {
+        const slid = slideBoxBFS(grid, bnx, bny, dx, dy, w, h);
+        fbx = slid.x; fby = slid.y;
+      }
+
+      // Caixa não pode passar por cima de outra caixa (só temos 1 no gerador, mas por segurança)
+      // e não pode sair do mapa (já garantido por isWalkableBFS)
+
+      // Se caixa chegou ao alvo → solucionável
+      if (targetSet.has(`${fbx},${fby}`)) return true;
+
+      const key = `${bx},${by},${fbx},${fby}`;
+      if (!visited.has(key)) {
+        visited.add(key);
+        queue.push({ px: bx, py: by, bx: fbx, by: fby });
+      }
+    }
+  }
+
+  return false;
+}
+
+// ========================
+// GERADOR COM RETRY
+// ========================
+function generateLevel(difficulty, wi, li) {
+  // Tenta até 60 variações; se nenhuma passar no BFS, relaxa e tenta mais
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const level = tryGenerateLevel(difficulty, wi, li, attempt);
+    if (level && isSolvable(level)) return level;
+  }
+  // Fallback: gera sem paredes internas nem mecânicas (trivialmente solucionável)
+  return tryGenerateLevel(difficulty, wi, li, -1, true);
+}
+
+function tryGenerateLevel(difficulty, wi, li, attempt, plainMode) {
+  const cfg = getProcConfig(wi, li);
+  const mech = plainMode ? { ice: 0, vines: 0, doors: 0 } : getWorldMechanics(wi);
+  const seed = hashSeed(difficulty, wi, li) + attempt * 7919;
+  const rng = mulberry32(seed);
+
+  const w = cfg.w, h = cfg.h;
+
+  // Grid base — bordas = 1, interior = 0
+  const grid = [];
+  for (let y = 0; y < h; y++) {
+    const row = [];
+    for (let x = 0; x < w; x++) {
+      row.push((x === 0 || y === 0 || x === w - 1 || y === h - 1) ? 1 : 0);
+    }
+    grid.push(row);
+  }
+
+  const playerStart = [1, 1];
+
+  // === PAREDES INTERNAS (com moderação) ===
+  // Não coloca parede adjacente ao playerStart nem em sua linha/coluna imediata (evita prender o player)
+  const wallChance = plainMode ? 0 : cfg.wallChance;
+  for (let y = 2; y < h - 1; y++) {
+    for (let x = 2; x < w - 1; x++) {
+      // Não bloquear a célula do player nem os vizinhos diretos
+      if (Math.abs(x - playerStart[0]) <= 1 && Math.abs(y - playerStart[1]) <= 1) continue;
+      if (rng() < wallChance) {
+        grid[y][x] = 1;
+      }
+    }
+  }
+
+  // === GARANTIR PELO MENOS 1 OBSTÁCULO ===
+  // Se nenhuma parede interna foi gerada, força uma em célula segura
+  if (!plainMode) {
+    let hasWall = false;
+    for (let y = 2; y < h - 1 && !hasWall; y++) {
+      for (let x = 2; x < w - 1 && !hasWall; x++) {
+        if (grid[y][x] === 1) hasWall = true;
+      }
+    }
+    if (!hasWall) {
+      // Escolhe célula segura (longe do player, não na borda)
+      const safeCells = [];
+      for (let y = 2; y < h - 1; y++) {
+        for (let x = 2; x < w - 1; x++) {
+          if (grid[y][x] !== 0) continue;
+          if (Math.abs(x - playerStart[0]) <= 1 && Math.abs(y - playerStart[1]) <= 1) continue;
+          safeCells.push({x, y});
+        }
+      }
+      if (safeCells.length > 0) {
+        const pick = safeCells[Math.floor(rng() * safeCells.length)];
+        grid[pick.y][pick.x] = 1;
+      }
+    }
+  }
+
+  // === CÉLULAS INTERIORES DISPONÍVEIS ===
+  const interior = [];
+  for (let y = 1; y < h - 1; y++) {
+    for (let x = 1; x < w - 1; x++) {
+      if (grid[y][x] !== 0) continue;
+      if (x === playerStart[0] && y === playerStart[1]) continue;
+      interior.push({x, y});
+    }
+  }
+
+  if (interior.length < 3) return null; // grid ficou pequeno demais
+
+  // === ALVO ===
+  const targetIdx = Math.floor(rng() * interior.length);
+  const target = interior[targetIdx];
+
+  // === CAIXA (com distância controlada) ===
+  const candidates = interior.filter((cell, idx) => {
+    if (idx === targetIdx) return false;
+    const d = Math.abs(cell.x - target.x) + Math.abs(cell.y - target.y);
+    return d >= cfg.minDist && d <= cfg.maxDist;
+  });
+
+  let boxPos;
+  if (candidates.length > 0) {
+    boxPos = candidates[Math.floor(rng() * candidates.length)];
+  } else {
+    let best = null, bestScore = Infinity;
+    for (let i = 0; i < interior.length; i++) {
+      if (i === targetIdx) continue;
+      const c = interior[i];
+      const d = Math.abs(c.x - target.x) + Math.abs(c.y - target.y);
+      const score = Math.abs(d - cfg.minDist);
+      if (score < bestScore) { bestScore = score; best = c; }
+    }
+    boxPos = best || interior[0];
+  }
+
+  // === APLICA ALVO E CAIXA ===
+  grid[target.y][target.x] = 2;
+  grid[boxPos.y][boxPos.x] = 3;
+  grid[playerStart[1]][playerStart[0]] = 4;
+
+    // === DENSIDADE DINÂMICA POR FASE/MUNDO ===
+  // Cresce com li (fase) e wi (mundo), com teto para não virar caos
+  const densityScale = 1 + li * 0.35 + wi * 0.20;
+
+  // === GELO ===
+  if (mech.ice) {
+    const baseRate = 0.05; // 5% base
+    const rate = Math.min(0.16, baseRate * densityScale); // teto 16%
+    const iceCount = Math.max(2, Math.floor((w * h) * rate));
+    let placed = 0, tries = 0;
+    while (placed < iceCount && tries < 200) {
+      tries++;
+      const cx = 1 + Math.floor(rng() * (w - 2));
+      const cy = 1 + Math.floor(rng() * (h - 2));
+      if (grid[cy][cx] !== 0) continue;
+      if (cx === playerStart[0] && cy === playerStart[1]) continue;
+      // Evita deixar playerStart isolado por gelo ao redor — não é problema, mas mantém estético
+      grid[cy][cx] = 7;
+      placed++;
+    }
+  }
+
+  // === VINHAS ===
+  if (mech.vines) {
+    const baseRate = 0.04; // 4% base
+    const rate = Math.min(0.13, baseRate * densityScale); // teto 13%
+    const vineCount = Math.max(1, Math.floor((w * h) * rate));
+    let placed = 0, tries = 0;
+    while (placed < vineCount && tries < 200) {
+      tries++;
+      const cx = 1 + Math.floor(rng() * (w - 2));
+      const cy = 1 + Math.floor(rng() * (h - 2));
+      if (grid[cy][cx] !== 0) continue;
+      if (cx === playerStart[0] && cy === playerStart[1]) continue;
+      grid[cy][cx] = 5;
+      placed++;
+    }
+  }
+
+  // === PAREDES INTERNAS ADICIONAIS POR DENSIDADE ===
+  // Além do wallChance inicial, adiciona paredes extras com base na fase/mundo
+  const extraWalls = Math.floor(li * 0.8 + wi * 0.5);
+  let extraPlaced = 0, extraTries = 0;
+  while (extraPlaced < extraWalls && extraTries < 200) {
+    extraTries++;
+    const cx = 1 + Math.floor(rng() * (w - 2));
+    const cy = 1 + Math.floor(rng() * (h - 2));
+    if (grid[cy][cx] !== 0) continue;
+    if (cx === playerStart[0] && cy === playerStart[1]) continue;
+    // Não bloquear o caminho imediato a partir do player
+    if (Math.abs(cx - playerStart[0]) <= 1 && Math.abs(cy - playerStart[1]) <= 1) continue;
+    // Não bloquear o alvo nem a caixa
+    if (grid[cy][cx] === 2 || grid[cy][cx] === 3) continue;
+    grid[cy][cx] = 1;
+    extraPlaced++;
+  }
+
+  // === PORTAS E BOTÕES ===
+  // Padrão simples: 1 porta em linha com o alvo (bloqueando o caminho direto) e 1 botão em outro canto.
+  // O BFS trata portas como parede (conservador) → se passar, é solucionável mesmo com a porta fechada.
+  const doorLinks = [];
+  const buttonLinks = [];
+  if (mech.doors && !plainMode) {
+    // Botão em célula livre longe do player
+    const btnCell = interior.find(c => grid[c.y][c.x] === 0 && (Math.abs(c.x - playerStart[0]) + Math.abs(c.y - playerStart[1])) > 3);
+    if (btnCell) {
+      grid[btnCell.y][btnCell.x] = 8;
+      buttonLinks.push([btnCell.x, btnCell.y]);
+      // Porta: uma célula de parede interna vira porta
+      const wallCells = [];
+      for (let y = 1; y < h - 1; y++) {
+        for (let x = 1; x < w - 1; x++) {
+          if (grid[y][x] === 1) wallCells.push({x, y});
+        }
+      }
+      if (wallCells.length > 0) {
+        const doorCell = wallCells[Math.floor(rng() * wallCells.length)];
+        grid[doorCell.y][doorCell.x] = 9;
+        doorLinks.push([doorCell.x, doorCell.y]);
+      }
+    }
+  }
+
+  // === PAR (movimentos para 3 estrelas) ===
+  const manhattan = Math.abs(boxPos.x - target.x) + Math.abs(boxPos.y - target.y);
+  const extraForMechanics = (mech.ice ? 2 : 0) + (mech.vines ? 3 : 0) + (mech.doors ? 4 : 0);
+  const par = cfg.parBase + manhattan * cfg.parPerDist + extraForMechanics;
+
+  return {
+    w, h,
+    playerStart,
+    grid,
+    par,
+    doorLinks,
+    buttonLinks,
+    _meta: { proc: true, seed, manhattan, attempt, plainMode: !!plainMode }
+  };
+}
+
+// Expert uses LEVEL_DATA_NORMAL for worlds 1-5, but world 0 is tutorial
+// Expert usa tutorial fixo no mundo 0; todas as outras fases são procedurais
+function getLevelData(wi, li) {
+  if (currentDifficulty === 'expert' && wi === 0) {
+    return EXPERT_TUTORIAL_LEVELS[li];
+  }
+  return generateLevel(currentDifficulty, wi, li);
 }
 
 // Expert worlds config (tutorial world prepended)
@@ -582,19 +814,21 @@ let expertAction = 'mover'; // 'mover' | 'segurar' — active action in Expert m
 // SAVE/LOAD
 // ========================
 function loadSave() {
+  // Chave de save inclui a dificuldade atual para isolar progresso
+  const saveKey = `puzzleverse_save_${currentDifficulty}`;
   try {
-    const raw = localStorage.getItem('puzzleverse_save');
+    const raw = localStorage.getItem(saveKey);
     if (raw) saveData = JSON.parse(raw);
-    else saveData = { worlds: [{ unlocked: true, levels: [{}, {}, {}, {}, {}] }] };
+    else saveData = { worlds: [{ unlocked: true, levels: [{unlocked:true},{},{},{}] }] };
   } catch(e) {
-    saveData = { worlds: [{ unlocked: true, levels: [{},{},{},{},{}] }] };
+    saveData = { worlds: [{ unlocked: true, levels: [{unlocked:true},{},{},{}] }] };
   }
   // Ensure all worlds/levels exist
   for (let w = 0; w < 5; w++) {
     if (!saveData.worlds) saveData.worlds = [];
-    if (!saveData.worlds[w]) saveData.worlds[w] = { unlocked: w === 0, levels: [{},{},{},{},{}] };
-    if (!saveData.worlds[w].levels) saveData.worlds[w].levels = [{},{},{},{},{}];
-    for (let l = 0; l < 5; l++) {
+    if (!saveData.worlds[w]) saveData.worlds[w] = { unlocked: w === 0, levels: [{unlocked: w===0},{},{},{}] };
+    if (!saveData.worlds[w].levels) saveData.worlds[w].levels = [{unlocked: w===0},{},{},{}];
+    for (let l = 0; l < 3; l++) {
       if (!saveData.worlds[w].levels[l]) saveData.worlds[w].levels[l] = {};
     }
   }
@@ -604,7 +838,13 @@ function loadSave() {
   } catch(e) {}
   applySettings();
 }
+
 function persistSave() {
+  localStorage.setItem(`puzzleverse_save_${currentDifficulty}`, JSON.stringify(saveData));
+  localStorage.setItem('puzzleverse_settings', JSON.stringify(settings));
+}
+function persistSave() {
+  if (!saveData.academy) saveData.academy = { completedLessons: {}, quizScores: {} };
   localStorage.setItem('puzzleverse_save', JSON.stringify(saveData));
   localStorage.setItem('puzzleverse_settings', JSON.stringify(settings));
 }
@@ -617,12 +857,14 @@ function setLevelComplete(worldIdx, levelIdx, starsEarned) {
   saveData.worlds[worldIdx].levels[levelIdx].done = true;
 
   // Unlock next level
-  if (levelIdx < 4) {
+  if (levelIdx < 2) {
     saveData.worlds[worldIdx].levels[levelIdx + 1].unlocked = true;
   } else {
     // Unlock next world
     if (worldIdx < 4) {
-      if (!saveData.worlds[worldIdx + 1]) saveData.worlds[worldIdx + 1] = { unlocked: true, levels: [{unlocked:true},{},{},{},{}] };
+      if (!saveData.worlds[worldIdx + 1]) {
+        saveData.worlds[worldIdx + 1] = { unlocked: true, levels: [{unlocked:true},{},{},{}] };
+      }
       saveData.worlds[worldIdx + 1].unlocked = true;
       saveData.worlds[worldIdx + 1].levels[0].unlocked = true;
     }
@@ -632,8 +874,10 @@ function setLevelComplete(worldIdx, levelIdx, starsEarned) {
   persistSave();
 }
 function isLevelUnlocked(w, l) {
-  if (devMode) return true; // Dev mode: all levels unlocked
+  if (devMode) return true;
   if (l === 0) return saveData.worlds[w]?.unlocked || false;
+  // Fase 4 (chefe) só desbloqueia após completar fase 3
+  if (l === 3) return saveData.worlds[w]?.levels[2]?.done || saveData.worlds[w]?.levels[3]?.done || false;
   return saveData.worlds[w]?.levels[l]?.unlocked || saveData.worlds[w]?.levels[l]?.done || false;
 }
 
@@ -774,8 +1018,8 @@ function setSfxVol(v) {
   persistSave();
 }
 function resetProgress() {
-  if (!confirm('Resetar todo o progresso? Não pode ser desfeito!')) return;
-  saveData = { worlds: [{ unlocked: true, levels: [{unlocked:true},{},{},{},{}] }] };
+  if (!confirm(`Resetar todo o progresso da dificuldade "${currentDifficulty}"? Não pode ser desfeito!`)) return;
+  saveData = { worlds: [{ unlocked: true, levels: [{unlocked:true},{},{},{}] }] };
   persistSave();
   closeSettings();
   showScreen('title');
@@ -784,20 +1028,39 @@ function resetProgress() {
 // ========================
 // SCREEN TRANSITIONS
 // ========================
+let _showScreenTimers = [];
+
 function showScreen(id) {
+  // Cancela timers antigos pendentes
+  _showScreenTimers.forEach(t => clearTimeout(t));
+  _showScreenTimers = [];
+
+  const targetEl = document.getElementById('screen-' + id);
+
+  // Esconde todas as telas EXCETO a de destino
   document.querySelectorAll('.screen').forEach(s => {
-    if (!s.classList.contains('hidden')) {
-      s.classList.add('disintegrate');
-      setTimeout(() => { s.classList.add('hidden'); s.classList.remove('disintegrate'); }, 600);
-    }
+    if (s === targetEl) return;                    // ← não mexe no alvo
+    if (s.classList.contains('hidden')) return;    // já está escondida
+    s.classList.add('disintegrate');
+    const t = setTimeout(() => {
+      s.classList.add('hidden');
+      s.classList.remove('disintegrate');
+    }, 600);
+    _showScreenTimers.push(t);
   });
-  setTimeout(() => {
-    const el = document.getElementById('screen-' + id);
-    el.classList.remove('hidden');
-    void el.offsetWidth;
-    el.style.animation = 'fadeIn 0.5s ease both';
-    setTimeout(() => el.style.animation = '', 600);
+
+  // Mostra a tela de destino
+  const t = setTimeout(() => {
+    if (!targetEl) return;
+    targetEl.classList.remove('hidden');
+    targetEl.classList.remove('disintegrate');
+    void targetEl.offsetWidth;
+    targetEl.style.animation = 'fadeIn 0.5s ease both';
+    const t2 = setTimeout(() => targetEl.style.animation = '', 600);
+    _showScreenTimers.push(t2);
   }, 300);
+  _showScreenTimers.push(t);
+
   currentScreen = id;
 }
 
@@ -833,7 +1096,7 @@ function renderWorldSelect() {
       <div class="world-info">
         <h3 style="color:${world.color}">${world.name}</h3>
         <p>${world.sub}</p>
-        <div class="world-stars">${'⭐'.repeat(Math.floor(totalStars/3))}${'☆'.repeat(Math.max(0, 5-Math.floor(totalStars/3)))}</div>
+        <div class="world-stars">${'⭐'.repeat(Math.floor(totalStars/3))}${'☆'.repeat(Math.max(0, 3-Math.floor(totalStars/3)))}</div>
       </div>
     `;
     if (unlocked) {
@@ -1020,23 +1283,32 @@ function renderLevelSelect(wi) {
   const grid = document.getElementById('levels-grid');
   grid.innerHTML = '';
 
-  for (let li = 0; li < 5; li++) {
+  for (let li = 0; li < 4; li++) {
+    const isBoss = (li === 3);
     const unlocked = isLevelUnlocked(wi, li);
     const stars = getStars(wi, li);
     const done = saveData.worlds[wi]?.levels[li]?.done;
 
     const card = document.createElement('div');
-    card.className = 'level-card' + (unlocked ? '' : ' locked') + (done ? ' completed' : '');
+    card.className = 'level-card' + (unlocked ? '' : ' locked') + (done ? ' completed' : '') + (isBoss ? ' boss-card' : '');
     card.style.animationDelay = `${li*0.05}s`;
     card.innerHTML = `
-      <div class="level-num" style="color:${done ? world.color : 'var(--muted)'}">${li+1}</div>
+      <div class="level-num" style="color:${done ? world.color : 'var(--muted)'}">${isBoss ? '💀' : (li+1)}</div>
       <div class="level-stars">${stars > 0 ? '⭐'.repeat(stars) + '☆'.repeat(3-stars) : unlocked ? '☆☆☆' : '🔒'}</div>
+      ${isBoss ? '<div style="font-size:0.7rem;color:var(--accent);font-weight:700;letter-spacing:0.1em">CHEFE</div>' : ''}
     `;
     if (unlocked) {
       card.addEventListener('click', () => {
         currentLevel = li;
-        startLevel(wi, li);
-        showScreen('game');
+        if (isBoss) {
+          // Inicia a boss fight
+          initAudio();
+          showScreen('boss');
+          if (typeof startBossFight === 'function') startBossFight(wi);
+        } else {
+          startLevel(wi, li);
+          showScreen('game');
+        }
       });
     }
     grid.appendChild(card);
@@ -1798,7 +2070,7 @@ function triggerWin() {
   }
 
   // Check if next level available
-  const isLastLevel = currentLevel === 4;
+  const isLastLevel = currentLevel === 2;
   const maxWorld = getActiveWorlds().length - 1;
   const isLastWorld = currentWorld === maxWorld;
   const nextBtn = document.getElementById('btn-next');
@@ -1913,11 +2185,11 @@ function tryDevPassword() {
     devMode = true;
     closeDevModal();
     document.getElementById('dev-badge').classList.add('visible');
-    // Unlock all worlds/levels in saveData for consistency
+    // Unlock all worlds/levels in saveData for consistency (apenas dificuldade atual)
     for (let w = 0; w < 5; w++) {
-      if (!saveData.worlds[w]) saveData.worlds[w] = { unlocked: true, levels: [{},{},{},{},{}] };
+      if (!saveData.worlds[w]) saveData.worlds[w] = { unlocked: true, levels: [{},{},{}] };
       saveData.worlds[w].unlocked = true;
-      for (let l = 0; l < 5; l++) {
+      for (let l = 0; l < 3; l++) {
         if (!saveData.worlds[w].levels[l]) saveData.worlds[w].levels[l] = {};
         saveData.worlds[w].levels[l].unlocked = true;
       }
@@ -1992,26 +2264,23 @@ function closeSettings() {
 // ========================
 function selectDifficulty(diff) {
   currentDifficulty = diff;
+  loadSave();          // ← carrega o save específico desta dificuldade
   initAudio();
   renderWorldSelect();
   showScreen('worlds');
 }
+
 
 function getActiveWorlds() {
   return currentDifficulty === 'expert' ? WORLDS_EXPERT : WORLDS;
 }
 
 function getActiveLevelData(wi, li) {
-  if (currentDifficulty === 'easy') {
-    return LEVEL_DATA_EASY[wi * 5 + li] ? LEVEL_DATA_EASY[wi * 5 + li][0] : LEVEL_DATA[wi * 5 + li][0];
-  } else if (currentDifficulty === 'normal') {
-    return LEVEL_DATA_NORMAL[wi * 5 + li] ? LEVEL_DATA_NORMAL[wi * 5 + li][0] : LEVEL_DATA[wi * 5 + li][0];
-  } else if (currentDifficulty === 'expert') {
-    if (wi === 0) return EXPERT_TUTORIAL_LEVELS[li] ? EXPERT_TUTORIAL_LEVELS[li][0] : null;
-    const nwi = wi - 1;
-    return LEVEL_DATA_NORMAL[nwi * 5 + li] ? LEVEL_DATA_NORMAL[nwi * 5 + li][0] : LEVEL_DATA[nwi * 5 + li][0];
+  // Tutorial Expert no mundo 0 continua fixo
+  if (currentDifficulty === 'expert' && wi === 0) {
+    return EXPERT_TUTORIAL_LEVELS[li] ? EXPERT_TUTORIAL_LEVELS[li][0] : null;
   }
-  return LEVEL_DATA[wi * 5 + li][0];
+  return generateLevel(currentDifficulty, wi, li);
 }
 
 // ========================
@@ -2120,14 +2389,37 @@ function shakeInput() {
   inp.classList.add('error');
   setTimeout(() => inp.classList.remove('error'), 400);
 }
+// ========================
+// BOSS CALLBACKS
+// ========================
+window.onBossWin = function(worldIdx) {
+  // Marca a fase 4 como concluída com 3 estrelas
+  if (!saveData.worlds[worldIdx].levels[3]) saveData.worlds[worldIdx].levels[3] = {};
+  saveData.worlds[worldIdx].levels[3].done = true;
+  saveData.worlds[worldIdx].levels[3].stars = 3;
+  // Desbloqueia próximo mundo se existir
+  if (worldIdx < 4) {
+    if (!saveData.worlds[worldIdx + 1]) saveData.worlds[worldIdx + 1] = { unlocked: true, levels: [{unlocked:true},{},{},{}] };
+    saveData.worlds[worldIdx + 1].unlocked = true;
+    saveData.worlds[worldIdx + 1].levels[0].unlocked = true;
+  }
+  persistSave();
+  renderLevelSelect(worldIdx);
+  showScreen('levels');
+};
+
+window.onBossAbort = function() {
+  renderLevelSelect(currentWorld);
+  showScreen('levels');
+};
 
 // ========================
 // INIT
 // ========================
-loadSave();
+loadSave(); // Carrega save da dificuldade padrão ('normal')
 
-// Ensure first world/level unlocked
-if (!saveData.worlds[0]) saveData.worlds[0] = { unlocked: true, levels: [{unlocked:true},{},{},{},{}] };
+// Ensure first world/level unlocked (apenas se save vazio)
+if (!saveData.worlds[0]) saveData.worlds[0] = { unlocked: true, levels: [{unlocked:true},{},{},{}] };
 saveData.worlds[0].unlocked = true;
 saveData.worlds[0].levels[0].unlocked = true;
 persistSave();

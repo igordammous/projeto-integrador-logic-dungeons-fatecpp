@@ -1,5 +1,3 @@
-Teste a IA diretamente nos seus apps favoritos … Use o Gemini para criar rascunhos e editar conteúdo, e tenha acesso à IA de última geração do Google com o Gemini Pro por R$ 96,99 R$ 23,99 durante 3 meses
-100%
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -21,6 +19,7 @@ Teste a IA diretamente nos seus apps favoritos … Use o Gemini para criar rascu
   </button>
   <div class="play-label">Clique para jogar</div>
   <button class="dev-mode-btn" id="dev-mode-btn" title="Modo Desenvolvedor">🔧 Dev</button>
+  <button class="academy-btn" id="academy-btn" title="Academia de Código">📚</button>
   <button class="title-settings-btn" id="settings-btn" title="Configurações">⚙️</button>
 </div>
 
@@ -109,6 +108,25 @@ Teste a IA diretamente nos seus apps favoritos … Use o Gemini para criar rascu
   </div>
 </div>
 
+<!-- ACADEMY - TRILHAS -->
+<div id="screen-academy" class="screen hidden">
+  <button class="back-btn" id="back-to-title-from-academy">← Voltar</button>
+  <div class="academy-header">
+    <h1 class="academy-title">📚 ACADEMIA DE CÓDIGO</h1>
+    <p class="academy-sub">Aprenda programação jogando. Cada trilha ensina o que você já viveu no jogo.</p>
+  </div>
+  <div class="academy-stats" id="academy-stats"></div>
+  <div class="trilhas-grid" id="trilhas-grid"></div>
+</div>
+
+<!-- ACADEMY - LIÇÃO -->
+<div id="screen-lesson" class="screen hidden">
+  <button class="back-btn" id="back-to-academy">← Academia</button>
+  <div class="lesson-container" id="lesson-container">
+    <!-- preenchido dinamicamente -->
+  </div>
+</div>
+
 <!-- WIN OVERLAY -->
 <div id="win-overlay">
   <div class="win-box">
@@ -168,5 +186,7 @@ Teste a IA diretamente nos seus apps favoritos … Use o Gemini para criar rascu
 </div>
 
 <script src="script.js"></script>
+<script src="academy.js"></script>
+<script src="boss-fight.js"></script>
 </body>
 </html>
