@@ -2070,14 +2070,37 @@ function triggerWin() {
   }
 
   // Check if next level available
-  const isLastLevel = currentLevel === 2;
+  const isLastNormalLevel = currentLevel === 2;   // fase 3 (índice 2) — última fase normal
   const maxWorld = getActiveWorlds().length - 1;
   const isLastWorld = currentWorld === maxWorld;
   const nextBtn = document.getElementById('btn-next');
-  if (isLastLevel && isLastWorld) {
+  const bossBtn = document.getElementById('btn-go-boss');  // ← novo botão
+
+  // Esconde o botão de chefe por padrão (só aparece após fase 3)
+  if (bossBtn) bossBtn.style.display = 'none';
+
+  if (isLastNormalLevel && isLastWorld) {
+    // Última fase normal do último mundo → ainda tem chefe, mas sem próximo mundo
     nextBtn.textContent = '🏆 Fim do Jogo!';
-    nextBtn.onclick = () => { overlay.classList.remove('show'); showScreen('worlds'); renderWorldSelect(); };
-  } else if (isLastLevel) {
+    nextBtn.onclick = () => {
+      overlay.classList.remove('show');
+      showScreen('worlds');
+      renderWorldSelect();
+    };
+    // Mostra o botão de chefe (o jogador ainda pode enfrentar o último chefe)
+    if (bossBtn) {
+      bossBtn.style.display = 'inline-block';
+      bossBtn.textContent = '💀 Enfrentar o Chefe';
+      bossBtn.onclick = () => {
+        overlay.classList.remove('show');
+        currentLevel = 3;
+        initAudio();
+        showScreen('boss');
+        if (typeof startBossFight === 'function') startBossFight(currentWorld);
+      };
+    }
+  } else if (isLastNormalLevel) {
+    // Fase 3 de um mundo intermediário → próximo mundo + chefe
     nextBtn.textContent = 'Próximo Mundo →';
     nextBtn.onclick = () => {
       overlay.classList.remove('show');
@@ -2086,7 +2109,20 @@ function triggerWin() {
       renderLevelSelect(currentWorld);
       showScreen('levels');
     };
+    // Mostra o botão de chefe
+    if (bossBtn) {
+      bossBtn.style.display = 'inline-block';
+      bossBtn.textContent = '💀 Enfrentar o Chefe';
+      bossBtn.onclick = () => {
+        overlay.classList.remove('show');
+        currentLevel = 3;
+        initAudio();
+        showScreen('boss');
+        if (typeof startBossFight === 'function') startBossFight(currentWorld);
+      };
+    }
   } else {
+    // Fase 1 ou 2 → próxima fase normal
     nextBtn.textContent = 'Próxima Fase →';
     nextBtn.onclick = () => {
       overlay.classList.remove('show');

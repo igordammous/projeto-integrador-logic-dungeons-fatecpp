@@ -1066,6 +1066,18 @@ input[type=range] {
 .win-btn.primary { border-color: var(--gold); color: var(--gold); }
 .win-btn.primary:hover { background: var(--gold); color: var(--bg); }
 
+/* Botão "Enfrentar o Chefe" — destaque vermelho */
+.win-btn.boss-btn {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+.win-btn.boss-btn:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+}
 /* particles */
 .particle {
   position: absolute;
@@ -1399,7 +1411,88 @@ input[type=range] {
   max-width: 520px;
 }
 .boss-hint b { color: var(--text); }
+.bar-wrap {
+  background: #000a;
+  border-radius: 6px;
+  height: 14px;
+  overflow: hidden;
+  border: 1px solid var(--wall2);
+}
+
+.bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent));
+  width: 100%;
+  transition: width 0.35s ease;
+}
 
 /* Overlays reutilizam .overlay, mas garantimos z-index acima */
 #boss-win-overlay, #boss-lose-overlay { z-index: 60; }
 .overlay-btn.secondary { font-size: 0.8rem; }
+
+/* ============================================
+   BOSS FIGHT — OVERLAYS
+   ============================================ */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 60;
+  backdrop-filter: blur(4px);
+}
+.overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.overlay-box {
+  background: var(--surface);
+  border: 1px solid var(--wall2);
+  border-radius: 16px;
+  padding: 30px 40px;
+  text-align: center;
+  max-width: 340px;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.6);
+}
+
+.overlay-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 1.3rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.overlay-title.win  { color: var(--vine2); }
+.overlay-title.lose { color: var(--accent); }
+
+.overlay-sub {
+  color: var(--muted);
+  margin-bottom: 22px;
+  font-size: 0.9rem;
+}
+
+.overlay-btn {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: 'Rajdhani', sans-serif;
+  transition: filter 0.15s;
+}
+.overlay-btn:hover { filter: brightness(1.15); }
+.overlay-btn.secondary {
+  font-size: 0.8rem;
+  background: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  color: var(--text);
+}

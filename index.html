@@ -127,6 +127,59 @@
   </div>
 </div>
 
+<!-- ==================== BOSS FIGHT SCREEN ==================== -->
+<div id="screen-boss" class="screen hidden">
+  <div class="boss-topbar">
+    <button class="back-btn" id="boss-back">← Fases</button>
+    <span class="boss-round">ROUND <b id="boss-round-count">1</b></span>
+  </div>
+
+  <div class="boss-hud">
+    <div class="boss-hud-row">
+      <span class="boss-name" id="boss-name">GUARDIÃO</span>
+      <span class="boss-status" id="boss-status">AGUARDANDO</span>
+    </div>
+    <div class="bar-wrap"><div class="bar-fill" id="boss-bar"></div></div>
+  </div>
+
+  <div class="boss-stage-wrap">
+    <canvas id="boss-canvas" width="512" height="384"></canvas>
+    <div class="boss-floating-msg" id="boss-floating-msg"></div>
+    <div class="boss-timer-wrap" id="boss-timer-wrap"><div class="boss-timer-fill" id="boss-timer-fill"></div></div>
+  </div>
+
+  <div class="boss-player-hud">
+    <span class="boss-player-name">VOCÊ</span>
+    <div class="boss-player-bar-col">
+      <div class="boss-player-hp-text" id="boss-player-hp-text">100 / 100</div>
+      <div class="bar-wrap"><div class="bar-fill player-bar-fill" id="boss-player-bar"></div></div>
+    </div>
+  </div>
+
+  <div class="boss-hint">
+    Use <b>WASD</b> ou <b>setas</b> para pisar nos blocos na ordem mostrada quando o ataque começar. 3 acertos derrotam o chefe.
+  </div>
+</div>
+
+<div class="overlay" id="boss-win-overlay">
+  <div class="overlay-box">
+    <div class="overlay-title win">CHEFE DERROTADO!</div>
+    <div class="overlay-sub" id="boss-win-sub">Você venceu o Guardião.</div>
+    <button class="overlay-btn" id="boss-win-next">Continuar →</button>
+    <button class="overlay-btn secondary" id="boss-win-retry" style="margin-top:8px;background:transparent;border:2px solid rgba(255,255,255,0.2)">↺ Tentar Novamente</button>
+  </div>
+</div>
+
+<div class="overlay" id="boss-lose-overlay">
+  <div class="overlay-box">
+    <div class="overlay-title lose">DERROTA</div>
+    <div class="overlay-sub" id="boss-lose-sub">O ataque do chefe foi rápido demais...</div>
+    <button class="overlay-btn" id="boss-lose-retry">Tentar Novamente</button>
+    <button class="overlay-btn secondary" id="boss-lose-back" style="margin-top:8px;background:transparent;border:2px solid rgba(255,255,255,0.2)">← Voltar às Fases</button>
+  </div>
+</div>
+<!-- ==================== /BOSS FIGHT ==================== -->
+ 
 <!-- WIN OVERLAY -->
 <div id="win-overlay">
   <div class="win-box">
@@ -138,10 +191,11 @@
       <span class="win-star" id="wstar3">⭐</span>
     </div>
     <div class="win-moves">Movimentos: <b id="win-moves-val">0</b></div>
-    <div class="win-btns">
-      <button class="win-btn" id="btn-retry">↺ Tentar Novamente</button>
-      <button class="win-btn primary" id="btn-next">Próxima Fase →</button>
-    </div>
+  <div class="win-btns">
+    <button class="win-btn" id="btn-retry">↺ Tentar Novamente</button>
+    <button class="win-btn boss-btn" id="btn-go-boss" style="display: none;">💀 Enfrentar o Chefe</button>
+    <button class="win-btn primary" id="btn-next">Próxima Fase →</button>
+  </div>
   </div>
 </div>
 
