@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog — Logic & Dungeon</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a28;
+    --accent: #e84040;
+    --accent2: #ff6b35;
+    --gold: #ffd700;
+    --green: #4ade80;
+    --cyan: #22d3ee;
+    --purple: #a855f7;
+    --text: #f0f0f8;
+    --muted: #6b7280;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    padding: 40px 20px;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+  h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent2), var(--accent), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 1rem;
+  }
+  .version {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .version::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--accent);
+  }
+  .version.major::before   { background: linear-gradient(180deg, var(--accent), var(--accent2)); }
+  .version.minor::before   { background: linear-gradient(180deg, var(--cyan), var(--purple)); }
+  .version.patch::before   { background: linear-gradient(180deg, var(--green), var(--cyan)); }
+  .version-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+  }
+  .version-number {
+    font-family: 'Consolas', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .version-date {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  .version-tag {
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .version-tag.major   { background: rgba(232,64,64,0.15);  color: var(--accent); }
+  .version-tag.minor   { background: rgba(34,211,238,0.15); color: var(--cyan); }
+  .version-tag.patch   { background: rgba(74,222,128,0.15); color: var(--green); }
+  .version h2 {
+    font-size: 1.15rem;
+    color: var(--text);
+    margin-bottom: 14px;
+    font-weight: 600;
+  }
+  .version ul {
+    list-style: none;
+    padding-left: 0;
+  }
+  .version li {
+    padding: 6px 0 6px 24px;
+    position: relative;
+    color: #d0d0e0;
+  }
+  .version li::before {
+    content: '▸';
+    position: absolute;
+    left: 4px;
+    color: var(--accent2);
+    font-weight: 700;
+  }
+  .version li b { color: var(--text); }
+  .version li code {
+    background: rgba(255,255,255,0.06);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', monospace;
+    font-size: 0.88em;
+    color: var(--gold);
+  }
+  .back-link {
+    display: inline-block;
+    margin-top: 30px;
+    color: var(--cyan);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--gold); }
+  .footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Changelog</h1>
+    <p class="subtitle">Histórico de versões — Logic &amp; Dungeon</p>
+  </header>
+
+  <!-- ===================== v2.1 ===================== -->
+  <div class="version minor">
+    <div class="version-header">
+      <span class="version-number">v2.1</span>
+      <span class="version-tag minor">Organização</span>
+      <span class="version-date">— Estrutura de pastas + sementes por sessão</span>
+    </div>
+    <h2>Reorganização do projeto</h2>
+    <ul>
+      <li>Estrutura de pastas reorganizada: <code>css/</code>, <code>js/</code>, <code>assets/sprites/</code> e <code>docs/</code></li>
+      <li>Caminhos de CSS, JS e sprites atualizados no HTML e no <code>script.js</code></li>
+      <li>Sprites do jogo gerados proceduralmente (18 PNGs de 64×64)</li>
+      <li>Documentação separada em <code>docs/</code></li>
+      <li><b>Seed por sessão:</b> cada reload do jogo gera fases diferentes, mantendo progressão por dificuldade/mundo/fase — ideal para uso em sala de aula</li>
+      <li>Fases continuam consistentes dentro da mesma sessão (reiniciar a fase não altera o layout)</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v2.0 ===================== -->
+  <div class="version major">
+    <div class="version-header">
+      <span class="version-number">v2.0</span>
+      <span class="version-tag major">Chefes</span>
+      <span class="version-date">— Sistema de boss fight</span>
+    </div>
+    <h2>Lutas contra chefes (Fase 4)</h2>
+    <ul>
+      <li>Nova tela <code>#screen-boss</code> integrada ao jogo</li>
+      <li>Módulo <code>boss-fight.js</code> autocontido</li>
+      <li>5 chefes temáticos: Golem de Pedra, Rainha das Vinhas, Titã Congelado, Guardião dos Portões e Senhor do Dungeon</li>
+      <li>Mecânica de sequência de blocos com timer e projéteis geométricos</li>
+      <li>Botão <b>💀 Enfrentar o Chefe</b> aparece no overlay de vitória após a fase 3</li>
+      <li>Fase 4 desbloqueia após completar a fase 3 do mesmo mundo</li>
+      <li>Vitória no chefe marca a fase 4 como concluída e desbloqueia o próximo mundo</li>
+      <li>Overlays de vitória e derrota com botões de Continuar / Tentar Novamente / Voltar às Fases</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.9 ===================== -->
+  <div class="version minor">
+    <div class="version-header">
+      <span class="version-number">v1.9</span>
+      <span class="version-tag minor">Academia</span>
+      <span class="version-date">— Ensino de programação</span>
+    </div>
+    <h2>Academia de Código</h2>
+    <ul>
+      <li>Nova tela <code>#screen-academy</code> acessível pelo botão 📚 no título</li>
+      <li>Módulo <code>academy.js</code> com 5 trilhas e ~12 lições</li>
+      <li>Cada lição conecta uma mecânica do jogo a um conceito de programação</li>
+      <li>Quiz em dois formatos: múltipla escolha e "complete o código"</li>
+      <li>Progresso salvo em <code>saveData.academy</code></li>
+      <li>Desbloqueio progressivo: trilha libera ao desbloquear o mundo correspondente</li>
+      <li><b>Correção:</b> tela de lição não "pisca e some" mais (fix do <code>showScreen</code>)</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.8 ===================== -->
+  <div class="version patch">
+    <div class="version-header">
+      <span class="version-number">v1.8</span>
+      <span class="version-tag patch">Fix</span>
+      <span class="version-date">— Navegação de telas</span>
+    </div>
+    <h2>Correção da tela "pisca e some"</h2>
+    <ul>
+      <li><code>showScreen</code> reformulado: não esconde mais a tela de destino</li>
+      <li><code>_showScreenTimers</code> cancela timers pendentes a cada troca de tela</li>
+      <li><code>openLesson</code> e <code>openTrilha</code> com <code>e.stopPropagation()</code> e verificação de estado</li>
+      <li>Resultado: navegação estável entre telas do menu e da academia</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.7 ===================== -->
+  <div class="version patch">
+    <div class="version-header">
+      <span class="version-number">v1.7</span>
+      <span class="version-tag patch">Fix</span>
+      <span class="version-date">— Vinhas</span>
+    </div>
+    <h2>Correção da geração de vinhas</h2>
+    <ul>
+      <li><code>WORLD_MECHANICS</code> expandido: vinhas habilitadas em todos os mundos (exceto Easy mundo 0)</li>
+      <li>Sorteio de células substituído por coleta + embaralhamento + colocação das N primeiras</li>
+      <li>Mínimo garantido: 2 vinhas e 3 gelos por fase quando a mecânica está ativa</li>
+      <li>Mesma correção aplicada a paredes extras</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.6 ===================== -->
+  <div class="version minor">
+    <div class="version-header">
+      <span class="version-number">v1.6</span>
+      <span class="version-tag minor">Balanceamento</span>
+      <span class="version-date">— Densidade e grid</span>
+    </div>
+    <h2>Aumento de grid e densidade dinâmica</h2>
+    <ul>
+      <li>Grid aumentado em todas as dificuldades: Easy 7×5 → <b>8×6</b>; Normal e Expert 9×7 → <b>10×8</b></li>
+      <li>Teto do grid ampliado: 13×11 → <b>15×13</b></li>
+      <li>Densidade de gelo, vinhas e paredes cresce com a fase/mundo</li>
+      <li><b>Obstáculo mínimo garantido:</b> pelo menos 1 parede interna por fase</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.5 ===================== -->
+  <div class="version minor">
+    <div class="version-header">
+      <span class="version-number">v1.5</span>
+      <span class="version-tag minor">Mecânicas</span>
+      <span class="version-date">— Paredes, gelo, vinhas, portas</span>
+    </div>
+    <h2>Geração procedural com BFS</h2>
+    <ul>
+      <li>Paredes internas, gelo, vinhas e portas geradas proceduralmente</li>
+      <li><code>isSolvable</code> com BFS de <code>(playerX, playerY, boxX, boxY)</code> até o alvo</li>
+      <li>Simulação de deslizamento no gelo durante o BFS</li>
+      <li>Até 60 tentativas de geração; fallback trivialmente solucionável</li>
+      <li>Limite de 200.000 iterações por BFS (anti-travamento)</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.4 ===================== -->
+  <div class="version minor">
+    <div class="version-header">
+      <span class="version-number">v1.4</span>
+      <span class="version-tag minor">Procedural</span>
+      <span class="version-date">— Geração de fases</span>
+    </div>
+    <h2>Fases geradas proceduralmente</h2>
+    <ul>
+      <li>Substituição dos arrays hardcoded por <code>generateLevel(difficulty, wi, li)</code></li>
+      <li>Bordas sempre parede (<code>1</code>), player em <code>[1,1]</code></li>
+      <li>Distância Manhattan mínima entre caixa e alvo garantida</li>
+      <li>RNG determinístico <code>mulberry32</code> com seed <code>hashSeed(difficulty, wi, li)</code></li>
+      <li>Tutorial Expert (mundo 0) permanece fixo para preservar as mensagens didáticas</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.3 ===================== -->
+  <div class="version patch">
+    <div class="version-header">
+      <span class="version-number">v1.3</span>
+      <span class="version-tag patch">Fix</span>
+      <span class="version-date">— Progresso</span>
+    </div>
+    <h2>Save isolado por dificuldade</h2>
+    <ul>
+      <li>Chave de save agora é <code>puzzleverse_save_${currentDifficulty}</code></li>
+      <li><code>selectDifficulty</code> recarrega o save ao trocar de dificuldade</li>
+      <li>Completar o jogo no Easy não desbloqueia fases no Normal ou Expert</li>
+      <li><code>resetProgress</code> e <code>tryDevPassword</code> operam apenas na dificuldade atual</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.2 ===================== -->
+  <div class="version patch">
+    <div class="version-header">
+      <span class="version-number">v1.2</span>
+      <span class="version-tag patch">Balanceamento</span>
+      <span class="version-date">— Fases por mundo</span>
+    </div>
+    <h2>Redução de 5 para 3 fases por mundo</h2>
+    <ul>
+      <li>Arrays de fases reduzidos para 3 por mundo em todas as dificuldades</li>
+      <li>Multiplicadores de índice atualizados: <code>wi * 5</code> → <code>wi * 3</code></li>
+      <li>Loops de <code>renderLevelSelect</code>, <code>loadSave</code> e <code>setLevelComplete</code> ajustados</li>
+      <li><code>style.css</code>: <code>.levels-grid</code> com <code>repeat(3, 1fr)</code></li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.1 ===================== -->
+  <div class="version patch">
+    <div class="version-header">
+      <span class="version-number">v1.1</span>
+      <span class="version-tag patch">Fix</span>
+      <span class="version-date">— Progresso</span>
+    </div>
+    <h2>Correção do save compartilhado</h2>
+    <ul>
+      <li>Identificado bug: progresso vazava entre dificuldades</li>
+      <li>Primeira tentativa de isolar save por dificuldade</li>
+      <li>Base para a solução definitiva da v1.3</li>
+    </ul>
+  </div>
+
+  <!-- ===================== v1.0 ===================== -->
+  <div class="version major">
+    <div class="version-header">
+      <span class="version-number">v1.0</span>
+      <span class="version-tag major">Release</span>
+      <span class="version-date">— Versão inicial</span>
+    </div>
+    <h2>Lançamento base</h2>
+    <ul>
+      <li>5 mundos × 5 fases = 25 fases por dificuldade</li>
+      <li>3 dificuldades: Easy, Normal, Expert</li>
+      <li>Mecânicas: empurrar caixa, gelo (deslizamento), vinhas (caixa presa), botões e portas</li>
+      <li>Modo Expert com comandos de texto (<code>mover direita</code>, <code>segurar bloco</code>)</li>
+      <li>Sistema de estrelas baseado em <code>par</code> de movimentos</li>
+      <li>Áudio procedural (música e SFX sintetizados)</li>
+      <li>Modo Desenvolvedor protegido por senha (<code>12345</code>)</li>
+      <li>Save via <code>localStorage</code></li>
+    </ul>
+  </div>
+
+  <a href="../index.html" class="back-link">← Voltar ao jogo</a>
+
+  <div class="footer">
+    Logic &amp; Dungeon · Documentação · Última atualização: v2.1
+  </div>
+
+</div>
+</body>
+</html>
