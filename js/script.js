@@ -15,36 +15,33 @@
 // Se um arquivo não existir ou não carregar, o jogo automaticamente usa o desenho vetorial
 // original como reserva (ver spriteReady/drawSprite) — não precisa remover nada daqui.
 const SPRITE_FILES = {
-  // Chão e parede por mundo
-  floor_earth:    'sprites/floor_earth.png',
-  wall_earth:     'sprites/wall_earth.png',
-  floor_vine:     'sprites/floor_vine.png',
-  wall_vine:      'sprites/wall_vine.png',
-  floor_ice:      'sprites/floor_ice.png',
-  wall_ice:       'sprites/wall_ice.png',
-  floor_door:     'sprites/floor_door.png',
-  wall_door:      'sprites/wall_door.png',
-  floor_master:   'sprites/floor_master.png',
-  wall_master:    'sprites/wall_master.png',
-  floor_tutorial: 'sprites/floor_tutorial.png', // Mundo Tutorial Expert
-  wall_tutorial:  'sprites/wall_tutorial.png',
-
-  // Bloco (caixa empurrável) — mesmo sprite (estrela) em todos os mundos
-  box_earth:      'star.png',
-  box_vine:       'star.png',
-  box_ice:        'star.png',
-  box_door:       'star.png',
-  box_master:     'star.png',
-  box_tutorial:   'star.png',
+  floor_earth:    'assets/sprites/floor_earth.png',
+  wall_earth:     'assets/sprites/wall_earth.png',
+  floor_vine:     'assets/sprites/floor_vine.png',
+  wall_vine:      'assets/sprites/wall_vine.png',
+  floor_ice:      'assets/sprites/floor_ice.png',
+  wall_ice:       'assets/sprites/wall_ice.png',
+  floor_door:     'assets/sprites/floor_door.png',
+  wall_door:      'assets/sprites/wall_door.png',
+  floor_master:   'assets/sprites/floor_master.png',
+  wall_master:    'assets/sprites/wall_master.png',
+  floor_tutorial: 'assets/sprites/floor_tutorial.png',
+  wall_tutorial:  'assets/sprites/wall_tutorial.png',
+  box_earth:      'assets/sprites/star.png',
+  box_vine:       'assets/sprites/star.png',
+  box_ice:        'assets/sprites/star.png',
+  box_door:       'assets/sprites/star.png',
+  box_master:     'assets/sprites/star.png',
+  box_tutorial:   'assets/sprites/star.png',
 };
 const sprites = {};
 
 // Personagem — sprite direcional (um PNG por direção, trocado conforme o movimento)
 const playerSprites = { baixo: new Image(), cima: new Image(), direita: new Image(), esquerda: new Image() };
-playerSprites.baixo.src    = 'baixo.png';
-playerSprites.cima.src     = 'cima.png';
-playerSprites.direita.src  = 'direita.png';
-playerSprites.esquerda.src = 'esquerda.png';
+playerSprites.baixo.src    = 'assets/sprites/baixo.png';
+playerSprites.cima.src     = 'assets/sprites/cima.png';
+playerSprites.direita.src  = 'assets/sprites/direita.png';
+playerSprites.esquerda.src = 'assets/sprites/esquerda.png';
 let playerFacing = 'baixo';
 let spritesLoaded = false; // vira true quando TODAS as imagens terminaram de tentar carregar (sucesso ou erro)
 (function loadSprites(){
@@ -311,6 +308,10 @@ const LEVEL_DATA = [
 // 'easy' | 'normal' | 'expert'
 let currentDifficulty = 'normal';
 
+// Semente aleatória por sessão (muda a cada reload)
+// Cada aluno que abre o jogo recebe uma seed diferente → fases diferentes
+const SESSION_SEED = Math.floor(Math.random() * 1000000);
+
 // EASY MODE levels — shorter grids, fewer puzzles, gradual intro of mechanics
 const LEVEL_DATA_EASY = [
   // WORLD 1 - Basic (easy: very short intro)
@@ -454,7 +455,7 @@ function getWorldMechanics(wi) {
 }
 
 function hashSeed(difficulty, wi, li) {
-  const s = `${difficulty}:${wi}:${li}`;
+  const s = `${difficulty}:${wi}:${li}:${SESSION_SEED}`;
   let hash = 2166136261;
   for (let i = 0; i < s.length; i++) {
     hash ^= s.charCodeAt(i);
@@ -1349,6 +1350,10 @@ function startLevel(wi, li) {
   const isExpertTutorial = currentDifficulty === 'expert' && wi === 0;
   document.getElementById('hud-title').textContent = `${worldName} · FASE ${li+1}`;
 
+  if (devMode && ld._meta) {
+    document.getElementById('hud-title').textContent += ` [seed:${SESSION_SEED}]`;
+  }
+  
   // Difficulty badge
   const badge = document.getElementById('hud-diff-badge');
   const diffLabels = { easy: 'FÁCIL', normal: 'NORMAL', expert: 'EXPERT' };
