@@ -601,22 +601,42 @@ const TRILHAS = [
     }
   }
   
-  // ========================
-  // HOOKS DE NAVEGAÇÃO
-  // ========================
-  document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('academy-btn');
-    if (btn) btn.addEventListener('click', showAcademy);
-  
-    const backAcademy = document.getElementById('back-to-academy');
-    if (backAcademy) backAcademy.addEventListener('click', () => {
+// ========================
+// HOOKS DE NAVEGAÇÃO (Blindados)
+// ========================
+function wireAcademyButtons() {
+  const btn = document.getElementById('academy-btn');
+  if (btn && !btn._wired) {
+    btn._wired = true;
+    btn.addEventListener('click', showAcademy);
+  }
+
+  const backAcademy = document.getElementById('back-to-academy');
+  if (backAcademy && !backAcademy._wired) {
+    backAcademy._wired = true;
+    backAcademy.addEventListener('click', () => {
       renderAcademy();
       showScreen('academy');
     });
-  
-    const backTitle = document.getElementById('back-to-title-from-academy');
-    if (backTitle) backTitle.addEventListener('click', () => showScreen('title'));
-  });
-  
-  // Expõe para o HTML (onclick inline, se preferir)
-  window.showAcademy = showAcademy;
+  }
+
+  const backTitle = document.getElementById('back-to-title-from-academy');
+  if (backTitle && !backTitle._wired) {
+    backTitle._wired = true;
+    backTitle.addEventListener('click', () => showScreen('title'));
+  }
+}
+
+// Executa imediatamente se o DOM já estiver pronto, senão espera
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', wireAcademyButtons);
+} else {
+  wireAcademyButtons();
+}
+
+function showAcademy() {
+  if (typeof initAudio === 'function') initAudio();
+  renderAcademy();          // Preenche as trilhas
+  showScreen('academy');    // Mostra a tela
+}
+window.showAcademy = showAcademy;

@@ -1,0 +1,6 @@
+VERSAO MESCLADA - LOGIC & DUNGEON
+
+- Baseada na versao Alpha 2.1, que inclui o botao global de mute e ajustes nas fases.
+- Inclui o modulo de boss fights reformulado da outra versao.
+- Inclui o sprite BOSS-Slime.png e corrige seu caminho para assets/sprites/.
+- Os demais arquivos e recursos da versao Alpha 2.1 foram preservados.

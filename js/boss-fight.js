@@ -16,7 +16,7 @@
     // DADOS DOS CHEFES POR MUNDO
     // ============================================================
     const BOSSES = [
-      { name: "GOLEM DE PEDRA",       icon: "🗿", color: "#a16207", dmgPerHit: 100, hp: 300 },
+      { name: "SLIME GIGANTE",        icon: "🟢", color: "#16a34a", dmgPerHit: 100, hp: 300, sprite: "assets/sprites/BOSS-Slime.png" },
       { name: "RAINHA DAS VINHAS",    icon: "🌺", color: "#16a34a", dmgPerHit: 100, hp: 300 },
       { name: "TITÃ CONGELADO",       icon: "❄️", color: "#22d3ee", dmgPerHit: 100, hp: 300 },
       { name: "GUARDIÃO DOS PORTÕES", icon: "🚪", color: "#f97316", dmgPerHit: 100, hp: 300 },
@@ -28,7 +28,8 @@
     // ============================================================
     const CFG = {
       playerMaxHp: 100,
-      dmgToPlayer: 20,
+      // Quantos ataques (erros) o jogador aguenta por dificuldade
+      hitsToDie: { easy: 5, normal: 4, expert: 3 },
       idleTime: [2600, 4200],
       telegraphTime: 900,
       showStepSpeed: 520,
@@ -53,6 +54,19 @@
     ];
     const BOSS_ANCHOR = { x: 6, y: 2.5 };
     
+    // Cache de sprites dos chefes (carregados sob demanda)
+    const bossSprites = {};
+    function getBossSprite(boss) {
+      if (!boss.sprite) return null;
+      let img = bossSprites[boss.sprite];
+      if (!img) {
+        img = new Image();
+        img.src = boss.sprite;
+        bossSprites[boss.sprite] = img;
+      }
+      return (img.complete && img.naturalWidth > 0) ? img : null;
+    }
+
     function getVar(name){
       return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
     }
@@ -70,6 +84,27 @@
     function tileAt(x, y) {
       return PUZZLE_TILES.find(t => t.x === x && t.y === y) || null;
     }
+    // Lê a dificuldade escolhida no script.js (easy | normal | expert)
+    function getDifficulty() {
+      let d = null;
+      try {
+        if (typeof currentDifficulty !== 'undefined') d = currentDifficulty;
+        else if (typeof selectedDifficulty !== 'undefined') d = selectedDifficulty;
+        else if (typeof difficulty !== 'undefined') d = difficulty;
+      } catch (e) {}
+      if (!d) d = window.currentDifficulty || window.selectedDifficulty || window.difficulty;
+      d = String(d || 'normal').toLowerCase();
+      if (d === 'facil' || d === 'fácil') d = 'easy';
+      if (d === 'dificil' || d === 'difícil') d = 'expert';
+      return CFG.hitsToDie[d] ? d : 'normal';
+    }
+    function hitsAllowed() { return CFG.hitsToDie[getDifficulty()]; }
+    // Dano por ataque; arredonda pra cima para que o último ataque sempre zere a vida
+    function damagePerHit() { return Math.ceil(CFG.playerMaxHp / hitsAllowed()); }
+    function hitsLeft() {
+      return Math.max(0, Math.ceil(state.playerHp / damagePerHit()));
+    }
+
     function randInt(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
     
     // ============================================================
@@ -158,7 +193,7 @@
       const d = dom();
       if (d.bossBar)   d.bossBar.style.width = Math.max(0, (state.bossHp / state.bossMaxHp) * 100) + '%';
       if (d.playerBar) d.playerBar.style.width = Math.max(0, (state.playerHp / CFG.playerMaxHp) * 100) + '%';
-      if (d.playerHpText) d.playerHpText.textContent = Math.max(0, state.playerHp) + ' / ' + CFG.playerMaxHp;
+      if (d.playerHpText) d.playerHpText.textContent = Math.max(0, Math.round(state.playerHp)) + ' / ' + CFG.playerMaxHp;
       if (d.roundCount) d.roundCount.textContent = state.round;
     }
     
@@ -271,6 +306,7 @@
         }
       } else {
         tile._pass = performance.now();
+        resolveFail('wrong');
       }
     }
     
@@ -327,8 +363,9 @@
       const d = dom();
       if (d.timerWrap) d.timerWrap.classList.remove('show');
       const msg = reason === 'time' ? 'TEMPO ESGOTADO!' : 'SEQUÊNCIA ERRADA!';
-      setMsg(msg + ' VOCÊ FOI ATINGIDO', 'alert', 1300);
-      state.playerHp = Math.max(0, state.playerHp - CFG.dmgToPlayer);
+      state.playerHp = Math.max(0, state.playerHp - damagePerHit());
+      const left = hitsLeft();
+      setMsg(msg + ' VOCÊ FOI ATINGIDO' + (left > 0 ? ` (${left} ${left === 1 ? 'chance' : 'chances'})` : ''), 'alert', 1300);
       state.playerFlash = performance.now();
       state.screenShake = performance.now();
       if (state.projectile) state.projectile.resolved = 'fail';
@@ -550,50 +587,28 @@
       const scale = state.phase === 'telegraph' ? 1 + glowPhase * 0.06 : 1;
       ctx.scale(scale, scale);
     
-      // Corpo
-      const bodyColor = flashActive ? '#fff' : '#2a2035';
-      ctx.fillStyle = bodyColor;
-      ctx.beginPath();
-      ctx.moveTo(-55, 60); ctx.lineTo(-60, -10); ctx.lineTo(-38, -58);
-      ctx.lineTo(38, -58); ctx.lineTo(60, -10); ctx.lineTo(55, 60);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = flashActive ? '#fff' : state.boss.color;
-      ctx.lineWidth = 3;
-      ctx.stroke();
-    
-      // Armadura central
-      ctx.fillStyle = flashActive ? '#fdd' : '#3d2f4c';
-      ctx.beginPath();
-      ctx.moveTo(-30, 50); ctx.lineTo(-34, -6); ctx.lineTo(0, -30); ctx.lineTo(34, -6); ctx.lineTo(30, 50);
-      ctx.closePath();
-      ctx.fill();
-    
-      // Olhos
-      const eyeGlow = flashActive ? '#fff' : (getVar('--gold') || '#ffd700');
-      ctx.save();
-      ctx.shadowColor = eyeGlow;
-      ctx.shadowBlur = 10 + glowPhase * 14;
-      ctx.fillStyle = eyeGlow;
-      ctx.beginPath();
-      ctx.ellipse(-14, -30, 7, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.beginPath();
-      ctx.ellipse(14, -30, 7, 4, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    
-      // Chifres
-      ctx.fillStyle = flashActive ? '#fff' : (getVar('--wall2') || '#4b5563');
-      ctx.beginPath(); ctx.moveTo(-38, -58); ctx.lineTo(-52, -92); ctx.lineTo(-26, -62); ctx.closePath(); ctx.fill();
-      ctx.beginPath(); ctx.moveTo(38, -58); ctx.lineTo(52, -92); ctx.lineTo(26, -62); ctx.closePath(); ctx.fill();
-    
-      // Ícone do boss
-      ctx.font = '28px serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(state.boss.icon, 0, 20);
-    
+      // Sprite do chefe (BOSS-Slime.png)
+      const sprite = getBossSprite(state.boss);
+      const size = 176;
+      if (sprite) {
+        ctx.save();
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(sprite, -size / 2, -104, size, size);
+        if (flashActive) {
+          ctx.globalCompositeOperation = 'source-atop';
+          ctx.globalAlpha = 0.7;
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(-size / 2, -104, size, size);
+        }
+        ctx.restore();
+      } else {
+        // Enquanto a imagem carrega (ou se falhar), mostra só o ícone
+        ctx.font = '64px serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(state.boss.icon, 0, 0);
+      }
+
       ctx.restore();
     }
     
@@ -739,6 +754,7 @@
     
       state = newState(worldIdx);
       active = true;
+      getBossSprite(state.boss); // pré-carrega o sprite
     
       // Atualiza HUD do chefe
       if (d.bossName)   d.bossName.textContent = state.boss.name;

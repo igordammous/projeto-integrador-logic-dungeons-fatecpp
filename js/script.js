@@ -15,6 +15,7 @@
 // Se um arquivo não existir ou não carregar, o jogo automaticamente usa o desenho vetorial
 // original como reserva (ver spriteReady/drawSprite) — não precisa remover nada daqui.
 const SPRITE_FILES = {
+  target:         'assets/sprites/target.png',
   floor_earth:    'assets/sprites/floor_earth.png',
   wall_earth:     'assets/sprites/wall_earth.png',
   floor_vine:     'assets/sprites/floor_vine.png',
@@ -474,28 +475,28 @@ function hashSeed(difficulty, wi, li) {
 // Vinhas: tratadas como chão normal no BFS (o BFS não modela o "stuck" para simplificar —
 //          se o BFS achar solução sem vinhas, com vinhas também acha, só com mais passos).
 
-function isWalkableBFS(grid, x, y, w, h) {
+function isWalkableBFS(grid, x, y, w, h, doorsOpen) {
   if (x < 0 || y < 0 || x >= w || y >= h) return false;
   const t = grid[y][x];
   if (t === 1) return false;   // parede
-  if (t === 9) return false;   // porta (conservador: BFS assume fechada)
-  if (t === 10) return false;  // boss (não usado no gerador atual)
+  if (t === 9) return !!doorsOpen; // porta: walkable só se doorsOpen=true
+  if (t === 10) return false;  // boss
   return true;
 }
 
 // Aplica deslizamento no gelo para a caixa
-function slideBoxBFS(grid, bx, by, dx, dy, w, h) {
+function slideBoxBFS(grid, bx, by, dx, dy, w, h, doorsOpen) {
   let x = bx, y = by;
   while (true) {
     const nx = x + dx, ny = y + dy;
-    if (!isWalkableBFS(grid, nx, ny, w, h)) break;
+    if (!isWalkableBFS(grid, nx, ny, w, h, doorsOpen)) break;
     x = nx; y = ny;
-    if (grid[y][x] !== 7) break; // parou de deslizar ao sair do gelo
+    if (grid[y][x] !== 7) break;
   }
   return { x, y };
 }
 
-function isSolvable(level) {
+function isSolvable(level, doorsOpen) {
   const { grid, playerStart, w, h } = level;
 
   // Localizar caixa e alvo(s)
@@ -523,7 +524,7 @@ function isSolvable(level) {
   const MAX_ITER = 200000;
 
   while (queue.length > 0) {
-    if (++iterations > MAX_ITER) return false; // segurança contra loop infinito
+    if (++iterations > MAX_ITER) return false;
     const { px, py, bx, by } = queue.shift();
 
     for (const [dx, dy] of dirs) {
@@ -531,7 +532,7 @@ function isSolvable(level) {
 
       // Caso 1: player anda livremente (sem caixa)
       if (!(npx === bx && npy === by)) {
-        if (isWalkableBFS(grid, npx, npy, w, h)) {
+        if (isWalkableBFS(grid, npx, npy, w, h, doorsOpen)) {
           const key = `${npx},${npy},${bx},${by}`;
           if (!visited.has(key)) {
             visited.add(key);
@@ -543,17 +544,14 @@ function isSolvable(level) {
 
       // Caso 2: player empurra a caixa
       const bnx = bx + dx, bny = by + dy;
-      if (!isWalkableBFS(grid, bnx, bny, w, h)) continue;
+      if (!isWalkableBFS(grid, bnx, bny, w, h, doorsOpen)) continue;
 
       // Aplica deslizamento se a caixa entrar em gelo
       let fbx = bnx, fby = bny;
       if (grid[bny][bnx] === 7) {
-        const slid = slideBoxBFS(grid, bnx, bny, dx, dy, w, h);
+        const slid = slideBoxBFS(grid, bnx, bny, dx, dy, w, h, doorsOpen);
         fbx = slid.x; fby = slid.y;
       }
-
-      // Caixa não pode passar por cima de outra caixa (só temos 1 no gerador, mas por segurança)
-      // e não pode sair do mapa (já garantido por isWalkableBFS)
 
       // Se caixa chegou ao alvo → solucionável
       if (targetSet.has(`${fbx},${fby}`)) return true;
@@ -573,10 +571,15 @@ function isSolvable(level) {
 // GERADOR COM RETRY
 // ========================
 function generateLevel(difficulty, wi, li) {
-  // Tenta até 60 variações; se nenhuma passar no BFS, relaxa e tenta mais
+  // No mundo 3, as portas ficam AO REDOR do alvo e só abrem com o botão.
+  // O BFS precisa assumir "porta aberta" para aprovar essas fases;
+  // caso contrário, toda geração com o alvo cercado seria rejeitada.
+  const doorsOpen = (wi === 3);
+
+  // Tenta até 60 variações; se nenhuma passar no BFS, cai no fallback
   for (let attempt = 0; attempt < 60; attempt++) {
     const level = tryGenerateLevel(difficulty, wi, li, attempt);
-    if (level && isSolvable(level)) return level;
+    if (level && isSolvable(level, doorsOpen)) return level;
   }
   // Fallback: gera sem paredes internas nem mecânicas (trivialmente solucionável)
   return tryGenerateLevel(difficulty, wi, li, -1, true);
@@ -741,28 +744,52 @@ function tryGenerateLevel(difficulty, wi, li, attempt, plainMode) {
     extraPlaced++;
   }
 
-  // === PORTAS E BOTÕES ===
-  // Padrão simples: 1 porta em linha com o alvo (bloqueando o caminho direto) e 1 botão em outro canto.
-  // O BFS trata portas como parede (conservador) → se passar, é solucionável mesmo com a porta fechada.
+// === PORTAS E BOTÕES ===
+  // Mundo 3 (Interruptores): portas ao redor do alvo, todas ligadas ao mesmo botão.
+  // Outros mundos com portas: porta em parede interna aleatória (comportamento anterior).
   const doorLinks = [];
   const buttonLinks = [];
   if (mech.doors && !plainMode) {
-    // Botão em célula livre longe do player
-    const btnCell = interior.find(c => grid[c.y][c.x] === 0 && (Math.abs(c.x - playerStart[0]) + Math.abs(c.y - playerStart[1])) > 3);
+    // Botão em célula livre longe do player (mesma regra para todos os mundos com portas)
+    const btnCell = interior.find(c =>
+      grid[c.y][c.x] === 0 &&
+      (Math.abs(c.x - playerStart[0]) + Math.abs(c.y - playerStart[1])) > 3
+    );
+
     if (btnCell) {
       grid[btnCell.y][btnCell.x] = 8;
       buttonLinks.push([btnCell.x, btnCell.y]);
-      // Porta: uma célula de parede interna vira porta
-      const wallCells = [];
-      for (let y = 1; y < h - 1; y++) {
-        for (let x = 1; x < w - 1; x++) {
-          if (grid[y][x] === 1) wallCells.push({x, y});
+
+      if (wi === 3) {
+        // === MUNDO 3: portas ao redor do alvo (apenas em células de chão) ===
+        const adj = [
+          { dx: 0,  dy: -1 }, // cima
+          { dx: 0,  dy:  1 }, // baixo
+          { dx: -1, dy:  0 }, // esquerda
+          { dx: 1,  dy:  0 }, // direita
+        ];
+        for (const { dx, dy } of adj) {
+          const nx = target.x + dx;
+          const ny = target.y + dy;
+          // Só converte se for chão livre (0) — não mexe em parede, caixa, player, ou outras mecânicas
+          if (grid[ny] && grid[ny][nx] === 0) {
+            grid[ny][nx] = 9;
+            doorLinks.push([nx, ny]);
+          }
         }
-      }
-      if (wallCells.length > 0) {
-        const doorCell = wallCells[Math.floor(rng() * wallCells.length)];
-        grid[doorCell.y][doorCell.x] = 9;
-        doorLinks.push([doorCell.x, doorCell.y]);
+      } else {
+        // === OUTROS MUNDOS: porta em parede interna aleatória ===
+        const wallCells = [];
+        for (let y = 1; y < h - 1; y++) {
+          for (let x = 1; x < w - 1; x++) {
+            if (grid[y][x] === 1) wallCells.push({x, y});
+          }
+        }
+        if (wallCells.length > 0) {
+          const doorCell = wallCells[Math.floor(rng() * wallCells.length)];
+          grid[doorCell.y][doorCell.x] = 9;
+          doorLinks.push([doorCell.x, doorCell.y]);
+        }
       }
     }
   }
@@ -810,6 +837,8 @@ let devMode = false;
 let grabbedBox = null;   // reference to the box currently being held
 let grabMode = false;    // whether grab mode is toggled on
 let expertAction = 'mover'; // 'mover' | 'segurar' — active action in Expert mode
+let macroQueue = [];        // Guarda os comandos a serem executados
+let isExecutingMacro = false; // Trava para não rodar dois comandos juntos
 
 // ========================
 // SAVE/LOAD
@@ -841,12 +870,11 @@ function loadSave() {
 }
 
 function persistSave() {
-  localStorage.setItem(`puzzleverse_save_${currentDifficulty}`, JSON.stringify(saveData));
-  localStorage.setItem('puzzleverse_settings', JSON.stringify(settings));
-}
-function persistSave() {
+  // Garante que a estrutura da academia exista antes de salvar
   if (!saveData.academy) saveData.academy = { completedLessons: {}, quizScores: {} };
-  localStorage.setItem('puzzleverse_save', JSON.stringify(saveData));
+  
+  // Salva na chave correta baseada na dificuldade atual (Easy, Normal ou Expert)
+  localStorage.setItem(`puzzleverse_save_${currentDifficulty}`, JSON.stringify(saveData));
   localStorage.setItem('puzzleverse_settings', JSON.stringify(settings));
 }
 function getStars(worldIdx, levelIdx) {
@@ -996,16 +1024,32 @@ function applySettings() {
   document.getElementById('vol-sfx').value = settings.volSfx * 100;
   document.getElementById('vol-music-val').textContent = Math.round(settings.volMusic * 100);
   document.getElementById('vol-sfx-val').textContent = Math.round(settings.volSfx * 100);
+  
   if (musicNodes.master) musicNodes.master.gain.value = settings.volMusic * 0.4;
+
+  // === NOVO: Atualiza o ícone do botão global ===
+  const globalBtn = document.getElementById('global-audio-btn');
+  if (globalBtn) {
+    // Se ambos estiverem mutados, mostra o ícone de mudo
+    if (!settings.music && !settings.sfx) {
+      globalBtn.textContent = '🔇';
+      globalBtn.classList.add('muted');
+    } else {
+      globalBtn.textContent = '🔊';
+      globalBtn.classList.remove('muted');
+    }
+  }
 }
 function toggleMusic() {
   settings.music = !settings.music;
   if (settings.music) { startMusic(); } else { stopMusic(); }
-  persistSave(); applySettings();
+  persistSave(); 
+  applySettings(); // Isso já vai atualizar o botão global automaticamente
 }
 function toggleSfx() {
   settings.sfx = !settings.sfx;
-  persistSave(); applySettings();
+  persistSave(); 
+  applySettings(); // Isso já vai atualizar o botão global automaticamente
 }
 function setMusicVol(v) {
   settings.volMusic = v / 100;
@@ -1029,38 +1073,28 @@ function resetProgress() {
 // ========================
 // SCREEN TRANSITIONS
 // ========================
-let _showScreenTimers = [];
-
 function showScreen(id) {
-  // Cancela timers antigos pendentes
-  _showScreenTimers.forEach(t => clearTimeout(t));
-  _showScreenTimers = [];
-
-  const targetEl = document.getElementById('screen-' + id);
-
-  // Esconde todas as telas EXCETO a de destino
+  // Esconde todas as telas
   document.querySelectorAll('.screen').forEach(s => {
-    if (s === targetEl) return;                    // ← não mexe no alvo
-    if (s.classList.contains('hidden')) return;    // já está escondida
-    s.classList.add('disintegrate');
-    const t = setTimeout(() => {
-      s.classList.add('hidden');
-      s.classList.remove('disintegrate');
-    }, 600);
-    _showScreenTimers.push(t);
+    s.classList.add('hidden');
+    s.classList.remove('disintegrate');
+    s.style.animation = ''; // Limpa qualquer animação travada
   });
 
-  // Mostra a tela de destino
-  const t = setTimeout(() => {
-    if (!targetEl) return;
-    targetEl.classList.remove('hidden');
-    targetEl.classList.remove('disintegrate');
-    void targetEl.offsetWidth;
-    targetEl.style.animation = 'fadeIn 0.5s ease both';
-    const t2 = setTimeout(() => targetEl.style.animation = '', 600);
-    _showScreenTimers.push(t2);
-  }, 300);
-  _showScreenTimers.push(t);
+  // Pega a tela que queremos abrir
+  const el = document.getElementById('screen-' + id);
+  if (!el) {
+    console.error("Tela não encontrada:", 'screen-' + id);
+    return;
+  }
+
+  // Mostra a tela da vez
+  el.classList.remove('hidden');
+  
+  // Animação suave de entrada (sem timers destrutivos)
+  void el.offsetWidth;
+  el.style.animation = 'fadeIn 0.3s ease both';
+  setTimeout(() => { el.style.animation = ''; }, 300);
 
   currentScreen = id;
 }
@@ -1336,6 +1370,12 @@ function getTileColor(type, worldIdx) {
 }
 
 function startLevel(wi, li) {
+   // Limpa a fila de comandos do Expert
+  if (typeof macroQueue !== 'undefined') {
+    macroQueue = [];
+    isExecutingMacro = false;
+    updateMacroUI();
+  }
   canvas = document.getElementById('game-canvas');
   ctx2d = canvas.getContext('2d');
 
@@ -1533,16 +1573,19 @@ function renderGame() {
           ctx2d.fillRect(px+TILE-4, py, 4, TILE);
         }
       } else if (tile === 2) { // Target
-        ctx2d.fillStyle = 'rgba(34,197,94,0.15)';
-        ctx2d.fillRect(px, py, TILE, TILE);
-        ctx2d.strokeStyle = '#22c55e';
-        ctx2d.lineWidth = 2;
-        ctx2d.strokeRect(px+6, py+6, TILE-12, TILE-12);
-        ctx2d.fillStyle = '#22c55e';
-        ctx2d.font = `${TILE*0.5}px serif`;
-        ctx2d.textAlign = 'center';
-        ctx2d.textBaseline = 'middle';
-        ctx2d.fillText('✦', px+TILE/2, py+TILE/2);
+        // Tenta desenhar o sprite. Se não existir, usa o vetorial original.
+        if (!drawSprite(ctx2d, 'target', px, py, TILE, TILE)) {
+          ctx2d.fillStyle = 'rgba(34,197,94,0.15)';
+          ctx2d.fillRect(px, py, TILE, TILE);
+          ctx2d.strokeStyle = '#22c55e';
+          ctx2d.lineWidth = 2;
+          ctx2d.strokeRect(px+6, py+6, TILE-12, TILE-12);
+          ctx2d.fillStyle = '#22c55e';
+          ctx2d.font = `${TILE*0.5}px serif`;
+          ctx2d.textAlign = 'center';
+          ctx2d.textBaseline = 'middle';
+          ctx2d.fillText('✦', px+TILE/2, py+TILE/2);
+        }      
       } else if (tile === 5) { // Vine
         const vgrad = ctx2d.createLinearGradient(px, py, px+TILE, py+TILE);
         vgrad.addColorStop(0, '#052e16');
@@ -2158,7 +2201,10 @@ function spawnParticle() {
 // CONTROLS
 // ========================
 document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
   if (currentScreen !== 'game') return;
+  if (document.getElementById('win-overlay').classList.contains('show')) return;
   if (document.getElementById('win-overlay').classList.contains('show')) return;
   if (currentDifficulty === 'expert') {
     // In expert mode, only R works via keyboard — but ONLY when NOT focused on the text input
@@ -2257,10 +2303,18 @@ document.getElementById('earth-btn').addEventListener('click', () => {
   initAudio();
   showScreen('difficulty');
 });
-document.getElementById('dev-mode-btn').addEventListener('click', () => {
-  initAudio();
-  openDevModal();
-});
+const devBtn = document.getElementById('dev-mode-btn');
+if (devBtn) {
+  devBtn.onclick = function() {
+    initAudio();
+    if (typeof openDevModal === 'function') {
+      openDevModal();
+    } else {
+      // Fallback caso a função tenha sumido
+      document.getElementById('dev-modal').classList.add('open');
+    }
+  };
+}
 document.getElementById('dev-enter-btn').addEventListener('click', tryDevPassword);
 document.getElementById('dev-password-input').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') tryDevPassword();
@@ -2291,6 +2345,25 @@ document.getElementById('settings-modal').addEventListener('click', (e) => {
   if (e.target === document.getElementById('settings-modal')) closeSettings();
 });
 
+document.getElementById('global-audio-btn').addEventListener('click', () => {
+  initAudio(); // Garante que o áudio foi inicializado (política dos navegadores)
+  
+  // Se o áudio estiver ligado (ou música ou sfx), desliga tudo.
+  // Se estiver tudo desligado, liga tudo de volta.
+  if (settings.music || settings.sfx) {
+    settings.music = false;
+    settings.sfx = false;
+    stopMusic();
+  } else {
+    settings.music = true;
+    settings.sfx = true;
+    startMusic();
+  }
+  
+  persistSave(); // Salva a escolha no localStorage
+  applySettings(); // Atualiza a UI (menu e botão)
+});
+
 // Expert: Enter key in command input submits
 document.getElementById('expert-cmd-input').addEventListener('keydown', (e) => {
   if (e.key === 'Enter') { e.preventDefault(); submitExpertCommand(); }
@@ -2299,6 +2372,10 @@ document.getElementById('expert-cmd-input').addEventListener('keydown', (e) => {
 function closeSettings() {
   document.getElementById('settings-modal').classList.remove('open');
 }
+
+document.getElementById('expert-macro-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); addMacroCommand(); }
+});
 
 // ========================
 // DIFFICULTY FUNCTIONS
@@ -2423,6 +2500,125 @@ function submitExpertCommand() {
   } else {
     setExpertFeedback(`⛔ Não foi possível mover para ${raw}. Há um obstáculo.`, 'err');
   }
+}
+
+// ========================
+// EXPERT MACRO SYSTEM (FILA DE COMANDOS)
+// ========================
+function updateMacroUI() {
+  const ui = document.getElementById('expert-macro-queue');
+  if (!ui) return;
+  if (macroQueue.length === 0) {
+    ui.textContent = 'Fila: vazia';
+    ui.style.color = '#6b7280';
+  } else {
+    ui.textContent = 'Fila: ' + macroQueue.map(c => c.raw).join(' → ');
+    ui.style.color = '#22d3ee';
+  }
+}
+
+function addMacroCommand() {
+  if (isExecutingMacro || currentScreen !== 'game') return;
+  const input = document.getElementById('expert-macro-input');
+  const raw = input.value.trim().toLowerCase();
+  if (!raw) return;
+
+  const VALID_DIRS = { 'direita': [1,0], 'esquerda': [-1,0], 'cima': [0,-1], 'baixo': [0,1] };
+  const repeatMatch = raw.match(/^repetir\s+(\d+)\s+(?:vezes:?\s*)?(mover\s+)?(direita|esquerda|cima|baixo)$/);
+  
+  if (repeatMatch) {
+    const count = parseInt(repeatMatch[1]);
+    const dirStr = repeatMatch[3];
+    if (count > 0 && count <= 20) {
+      const [dx, dy] = VALID_DIRS[dirStr];
+      for (let i = 0; i < count; i++) {
+        macroQueue.push({ type: 'mover', dx, dy, raw: dirStr });
+      }
+      input.value = '';
+      updateMacroUI();
+      setExpertFeedback(`✅ Adicionado: ${count}x mover ${dirStr}`, 'ok');
+    } else {
+      setExpertFeedback('❌ O limite de repetição é entre 1 e 20.', 'err');
+    }
+  } 
+  else if (VALID_DIRS[raw.replace('mover ', '')]) {
+    const dirStr = raw.replace('mover ', '');
+    const [dx, dy] = VALID_DIRS[dirStr];
+    macroQueue.push({ type: 'mover', dx, dy, raw: dirStr });
+    input.value = '';
+    updateMacroUI();
+    setExpertFeedback(`✅ Adicionado: mover ${dirStr}`, 'ok');
+  } 
+  else if (raw === 'segurar') {
+    macroQueue.push({ type: 'segurar', raw: 'segurar' });
+    input.value = '';
+    updateMacroUI();
+    setExpertFeedback('✅ Adicionado: segurar', 'ok');
+  } 
+  else {
+    setExpertFeedback('❌ Comando inválido.', 'err');
+    shakeInput();
+  }
+}
+
+function clearMacroQueue() {
+  if (isExecutingMacro) return;
+  macroQueue = [];
+  updateMacroUI();
+}
+
+function runMacroQueue() {
+  if (isExecutingMacro || macroQueue.length === 0 || currentScreen !== 'game') return;
+  
+  isExecutingMacro = true;
+  setExpertFeedback('▶ Executando fila...', 'ok');
+  
+  function processNext() {
+    // Se saiu do jogo ou venceu, cancela
+    if (currentScreen !== 'game' || document.getElementById('win-overlay').classList.contains('show')) {
+      macroQueue = [];
+      updateMacroUI();
+      isExecutingMacro = false;
+      return;
+    }
+
+    if (macroQueue.length === 0) {
+      isExecutingMacro = false;
+      setExpertFeedback('✅ Fila concluída.', 'ok');
+      updateMacroUI();
+      return;
+    }
+    
+    const cmd = macroQueue.shift(); 
+    updateMacroUI(); 
+    const prevMoves = moves;
+    
+    if (cmd.type === 'mover') {
+      // Atualiza o sprite para olhar para a direção certa
+      if (cmd.dx === 1) playerFacing = 'direita';
+      else if (cmd.dx === -1) playerFacing = 'esquerda';
+      else if (cmd.dy === 1) playerFacing = 'baixo';
+      else if (cmd.dy === -1) playerFacing = 'cima';
+      
+      tryMove(cmd.dx, cmd.dy);
+    } else if (cmd.type === 'segurar') {
+      toggleGrab();
+    }
+    
+    // Se o comando não mudou os movimentos (bateu na parede), quebra o loop
+    if (cmd.type === 'mover' && moves === prevMoves) {
+       setExpertFeedback('⛔ Bloqueado por obstáculo. Fila interrompida.', 'err');
+       macroQueue = [];
+       updateMacroUI();
+       isExecutingMacro = false;
+       return;
+    }
+
+    // Executa o próximo em 250ms
+    setTimeout(processNext, 250);
+  }
+
+  processNext();
 }
 
 function shakeInput() {
