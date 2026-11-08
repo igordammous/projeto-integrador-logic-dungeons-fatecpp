@@ -373,15 +373,57 @@ const LEVEL_DATA_NORMAL = [
 // EXPERT MODE — Tutorial world (world 0) + same levels as normal but arrow keys disabled
 // Tutorial world teaches command-based movement
 const EXPERT_TUTORIAL_LEVELS = [
-  // Tutorial 1: Move right
-  [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,4,0,3,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:99,
-      tutorialMsg:'👋 Bem-vindo ao Modo Expert! Selecione "MOVER" e digite "direita" para se mover. Empurre a caixa até o alvo verde!' } ],
-  // Tutorial 2: Move with box
-  [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,4,3,0,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:99,
-      tutorialMsg:'📦 Agora empurre a caixa! Mova o personagem em direção à caixa para empurrá-la. Use "mover direita" repetidamente.' } ],
-  // Tutorial 3: Grab
-  [ { w:7, h:5, playerStart:[1,2], grid:[[1,1,1,1,1,1,1],[1,0,0,0,0,0,1],[1,0,4,3,0,2,1],[1,0,0,0,0,0,1],[1,1,1,1,1,1,1]], par:99,
-      tutorialMsg:'🤝 Aprenda a SEGURAR! Fique ao lado da caixa, selecione "SEGURAR" e envie. Depois mova com "mover" para arrastar a caixa.' } ],
+  // --- FASE 1: Movimento Básico e Comando "MOVER" ---
+  [ { w:7, h:5, playerStart:[1,3], 
+      grid:[
+        [1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,1],
+        [1,0,0,0,3,2,1],
+        [1,0,4,0,0,0,1],
+        [1,1,1,1,1,1,1]
+      ], par:4,
+      tutorialMsg:'👋 Bem-vindo ao Modo Expert! Para jogar, use a caixa de texto e digite comandos como "mover direita". Empurre a caixa até o alvo verde para vencer!' } 
+  ],
+
+  // --- FASE 2: Movimento e Comando "SEGURAR" ---
+  [ { w:8, h:6, playerStart:[1,1], 
+      grid:[
+        [1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,1],
+        [1,0,3,4,0,0,0,1],
+        [1,0,0,0,0,0,0,1],
+        [1,0,0,0,0,2,0,1],
+        [1,1,1,1,1,1,1,1]
+      ], par:8,
+      tutorialMsg:'🤝 Agora você aprendeu a se mover. Selecione o botão "SEGURAR", digite "direita" e clique em ENVIAR. Depois, use "MOVER direita" para arrastar a caixa até o alvo!' } 
+  ],
+
+  // --- FASE 3: O Comando de Repetição (LOOP) ---
+  [ { w:10, h:5, playerStart:[2,3], 
+      grid:[
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,0,0,0,0,0,2,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,4,3,0,0,0,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1]
+      ], par:9,
+      tutorialMsg:'🔁 O alvo está longe! Em vez de digitar "direita" várias vezes, use a caixa de baixo (Fila de Comandos). Digite "repetir 5 vezes mover direita", clique em Add e depois em Rodar!' } 
+  ],
+
+  // --- FASE 4: O Chefe do Tutorial (Liberado após a Fase 3) ---
+  [ { w:10, h:8, playerStart:[1,6], 
+      grid:[
+        [1,1,1,1,1,1,1,1,1,1],
+        [1,0,0,2,0,2,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,0,0,0,0,0,0,0,1],
+        [1,0,3,0,0,0,3,0,0,1],
+        [1,1,1,1,1,1,1,1,1,1]
+      ], par:12,
+      tutorialMsg:'🏁 Desafio Final do Tutorial! Use todos os comandos que aprendeu (Mover, Segurar e Repetir) para colocar as DUAS caixas nos alvos. Depois disso, você estará pronto para enfrentar os Chefes!' } 
+  ]
 ];
 
 // ========================
@@ -829,6 +871,7 @@ let currentWorld = 0;
 let currentLevel = 0;
 let gameState = null;
 let moves = 0;
+let restarts = 0;
 let saveData = {};
 let settings = { music: true, sfx: true, volMusic: 0.7, volSfx: 0.8 };
 let audioCtx = null;
@@ -880,11 +923,16 @@ function persistSave() {
 function getStars(worldIdx, levelIdx) {
   return (saveData.worlds[worldIdx]?.levels[levelIdx]?.stars) || 0;
 }
-function setLevelComplete(worldIdx, levelIdx, starsEarned) {
+function setLevelComplete(worldIdx, levelIdx, starsEarned, nota = 0) { // <-- NOVO: recebe nota
   const prev = getStars(worldIdx, levelIdx);
   if (starsEarned > prev) saveData.worlds[worldIdx].levels[levelIdx].stars = starsEarned;
   saveData.worlds[worldIdx].levels[levelIdx].done = true;
-
+  
+  // NOVO: Salva a nota mais alta que o jogador já tirou naquela fase
+  const prevNota = saveData.worlds[worldIdx].levels[levelIdx].nota || 0;
+  if (nota > prevNota) {
+    saveData.worlds[worldIdx].levels[levelIdx].nota = nota;
+  }
   // Unlock next level
   if (levelIdx < 2) {
     saveData.worlds[worldIdx].levels[levelIdx + 1].unlocked = true;
@@ -903,10 +951,16 @@ function setLevelComplete(worldIdx, levelIdx, starsEarned) {
   persistSave();
 }
 function isLevelUnlocked(w, l) {
-  if (devMode) return true;
+  // Se o modo dev estiver ativo, libera tudo
+  if (devMode) return true; 
+  
+  // A fase 1 (índice 0) só abre se o mundo estiver liberado
   if (l === 0) return saveData.worlds[w]?.unlocked || false;
-  // Fase 4 (chefe) só desbloqueia após completar fase 3
+  
+  // A fase 4 (índice 3, o Chefe) só abre se a fase 3 (índice 2) estiver concluída
   if (l === 3) return saveData.worlds[w]?.levels[2]?.done || saveData.worlds[w]?.levels[3]?.done || false;
+  
+  // As fases 2 e 3 (índices 1 e 2) só abrem se estiverem explicitamente liberadas OU se a anterior estiver concluída
   return saveData.worlds[w]?.levels[l]?.unlocked || saveData.worlds[w]?.levels[l]?.done || false;
 }
 
@@ -1376,13 +1430,16 @@ function startLevel(wi, li) {
     isExecutingMacro = false;
     updateMacroUI();
   }
+  moves = 0;
+  restarts = 0;
+
   canvas = document.getElementById('game-canvas');
   ctx2d = canvas.getContext('2d');
 
   const ld = getActiveLevelData(wi, li);
   if (!ld) { console.error('No level data for', wi, li); return; }
 
-  moves = 0;
+
   document.getElementById('hud-moves').textContent = '0';
 
   const worldList = getActiveWorlds();
@@ -1908,16 +1965,44 @@ function tryMove(dx, dy) {
     const bnx = grabbedBox.x + dx;
     const bny = grabbedBox.y + dy;
 
+    // --- NOVO: VINHAS NO GRAB MODE ---
+    // Verifica se a caixa ou o jogador estão tentando entrar numa vinha enquanto seguram a caixa
+    const targetTileForPlayer = gs.grid[ny] && gs.grid[ny][nx] !== undefined ? gs.grid[ny][nx] : 1;
+    const targetTileForBox = gs.grid[bny] && gs.grid[bny][bnx] !== undefined ? gs.grid[bny][bnx] : 1;
+    
+    // Se o jogador vai pisar na vinha OU a caixa vai passar pela vinha
+    if (targetTileForPlayer === 5 || targetTileForBox === 5) {
+      const sameDir = grabbedBox.releaseDir && 
+                      grabbedBox.releaseDir.dx === dx && 
+                      grabbedBox.releaseDir.dy === dy;
+
+      if (!sameDir) {
+        // Primeiro movimento: Avisa que está preso e não move nada
+        grabbedBox.releaseDir = { dx, dy };
+        playSfx('move');
+        return;
+      }
+      // Segundo movimento: Solta do "preso" e prossegue
+      grabbedBox.releaseDir = null;
+    } else {
+      grabbedBox.releaseDir = null; // Limpa estado se não for vinha
+    }
+    // ---------------------------------
+
     // Check bounds and walkability for player destination
     if (!isWalkable(gs, nx, ny) && !(nx === grabbedBox.x && ny === grabbedBox.y)) return;
+    
     // Check bounds and walkability for box destination (no going out of map)
     if (bnx < 0 || bny < 0 || bnx >= gs.w || bny >= gs.h) return;
     const boxDestTile = gs.grid[bny][bnx];
+    
     if (boxDestTile === 1) return; // box can't go into wall
     if (boxDestTile === 9 && !checkDoorOpen(gs, bnx, bny)) return; // closed door
+    
     // Can't move box into another box
     const otherBox = gs.boxes.find(b => b !== grabbedBox && b.x === bnx && b.y === bny);
     if (otherBox) return;
+    
     // Player moving INTO the box position is OK (they swap adjacency)
     // But if player's new position is NOT the box's current position and not walkable, block
     if (!(nx === grabbedBox.x && ny === grabbedBox.y)) {
@@ -1945,6 +2030,23 @@ function tryMove(dx, dy) {
   const ny = gs.player.y + dy;
 
   if (!isWalkable(gs, nx, ny)) return;
+
+  // --- NOVO: O PERSONAGEM FICA PRESO NA VINHA ---
+  if (gs.grid[ny][nx] === 5) {
+    const sameDir = gs.player.releaseDir &&
+      gs.player.releaseDir.dx === dx &&
+      gs.player.releaseDir.dy === dy;
+
+    if (!sameDir) {
+      gs.player.releaseDir = { dx, dy };
+      playSfx('move'); // Toca o som, mas não move
+      return;
+    }
+    gs.player.releaseDir = null; // Soltou!
+  } else {
+    gs.player.releaseDir = null; // Limpa se sair da direção
+  }
+  // ----------------------------------------------
 
   const box = getBoxAt(gs, nx, ny);
   if (box) {
@@ -2061,7 +2163,7 @@ function toggleGrab() {
   grabMode = false;
 }
 
-function getPortalExit(gs, which, dx, dy) {
+function getPortalExit(gs, which, dx, dy) {er
   const src = which === 'A' ? gs.portals.A : gs.portals.B;
   const dst = which === 'A' ? gs.portals.B : gs.portals.A;
   if (!dst) return null;
@@ -2087,19 +2189,48 @@ function triggerWin() {
   playSfx('win');
   const ld = getActiveLevelData(currentWorld, currentLevel);
   const par = ld ? ld.par : 999;
+  
+  // === CÁLCULO DA NOTA (0 a 100) ===
+  let nota = 100;
+  
+  // Desconto por movimentos (máximo 50 pontos de desconto)
+  if (moves > par) {
+    const penalidadeMovimentos = (moves - par) * 2;
+    nota -= Math.min(50, penalidadeMovimentos);
+  }
+  
+  // Desconto por reinícios (O primeiro reinício é grátis!)
+  let reiniciosPenalizados = Math.max(0, restarts - 1);
+  const penalidadeReinicios = reiniciosPenalizados * 10;
+  nota -= Math.min(50, penalidadeReinicios);
+  
+  // Garante que a nota não fique abaixo de 0
+  nota = Math.max(0, nota);
+  
+  // Define as estrelas com base na nota
   let stars = 1;
-  // In expert tutorial mode, always 3 stars
-  if (currentDifficulty === 'expert' && currentWorld === 0) { stars = 3; }
-  else if (moves <= par) stars = 3;
-  else if (moves <= par * 1.5) stars = 2;
+  if (nota >= 90) stars = 3;
+  else if (nota >= 70) stars = 2;
 
-  setLevelComplete(currentWorld, currentLevel, stars);
+  // Se for o tutorial do Expert, sempre 100 e 3 estrelas
+  if (currentDifficulty === 'expert' && currentWorld === 0) {
+    stars = 3;
+    nota = 100;
+  }
+
+  setLevelComplete(currentWorld, currentLevel, stars, nota);
 
   const overlay = document.getElementById('win-overlay');
   document.getElementById('win-moves-val').textContent = moves;
 
-  const subs = ['Perfeito! 🎯', 'Muito bem! 💪', 'Fase completa! 🎉'];
-  document.getElementById('win-sub').textContent = subs[3-stars];
+  // Exibe a Nota e o Feedback detalhado
+  const reiniciosMsg = restarts > 0 ? `Reinícios: ${restarts} (1º grátis)` : `Sem reinícios`;
+  const subs = [
+    `Nota: ${nota}/100.<br><span style="font-size:0.8rem; color:var(--muted)">Movimentos: ${moves} (Par: ${par}) | ${reiniciosMsg}</span>`, 
+    `Nota: ${nota}/100. Muito bem!<br><span style="font-size:0.8rem; color:var(--muted)">Movimentos: ${moves} (Par: ${par}) | ${reiniciosMsg}</span>`, 
+    `Nota: ${nota}/100. Solução ótima! 🎯<br><span style="font-size:0.8rem; color:var(--muted)">Movimentos: ${moves} (Par: ${par}) | ${reiniciosMsg}</span>`
+  ];
+  document.getElementById('win-sub').innerHTML = subs[3-stars];
 
   ['wstar1','wstar2','wstar3'].forEach((id, i) => {
     const el = document.getElementById(id);
@@ -2243,6 +2374,7 @@ document.addEventListener('keydown', (e) => {
 
     case 'r':
       e.preventDefault();
+      restarts++; // <-- NOVO
       startLevel(currentWorld, currentLevel);
       break;
 
@@ -2336,9 +2468,13 @@ document.getElementById('back-to-levels').addEventListener('click', () => {
   renderLevelSelect(currentWorld);
   showScreen('levels');
 });
-document.getElementById('btn-reset').addEventListener('click', () => startLevel(currentWorld, currentLevel));
+document.getElementById('btn-reset').addEventListener('click', () => {
+  restarts++; // <-- NOVO
+  startLevel(currentWorld, currentLevel)
+});
 document.getElementById('btn-retry').addEventListener('click', () => {
   document.getElementById('win-overlay').classList.remove('show');
+  restarts++; // <-- NOVO
   startLevel(currentWorld, currentLevel);
 });
 document.getElementById('settings-modal').addEventListener('click', (e) => {
